@@ -125,6 +125,14 @@
   .veu.on{opacity:1;pointer-events:auto}
   .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;max-width:560px;margin:0 auto;background:var(--paper);border-radius:28px 28px 0 0;padding:10px 20px calc(22px + var(--sb));transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
   .sheet.on{transform:none}
+  .sheet{max-height:92vh;overflow-y:auto}
+  .mults{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+  .mult{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;letter-spacing:.04em}
+  .mult.on{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+  .sugestao{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;min-height:34px;font-size:13px;color:var(--muted)}
+  .sugestao b{color:var(--ink);font-weight:500}
+  .usar{border:1px solid var(--ink);background:transparent;border-radius:999px;height:34px;padding:0 12px;font-size:13px;color:var(--muted)}
+  .usar:active{background:var(--mist)}
   .alca{width:42px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 16px}
   .sheet .codigo{font-family:var(--serif);font-size:30px;letter-spacing:.02em}
   .selo{display:inline-block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--mist);margin-top:6px}
@@ -139,6 +147,7 @@
   /* ---------- Resumo ---------- */
   .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+  .kpi.largo{grid-column:1/-1}
   .kpi.esc{background:var(--ink);color:#fff;border-color:var(--ink);grid-column:1/-1}
   .kpi .v{font-family:var(--serif);font-size:28px;margin-top:8px;line-height:1}
   .kpi.esc .v{font-size:42px}
@@ -285,7 +294,9 @@
     <section class="tela" id="t-precificar">
       <div class="eyebrow">Estoque</div>
       <h1>Precificar</h1>
-      <p class="sub">Leia a etiqueta, digite o preço e salve. A câmera volta sozinha.</p>
+      <p class="sub">Leia a etiqueta, digite quanto pagou e o preço é sugerido na hora.</p>
+      <div class="eyebrow" style="margin-bottom:8px">Multiplicador sobre o custo</div>
+      <div class="mults" id="pMults"></div>
 
       <div class="cam" id="camPrec">
         <div class="video" id="camPrec-v"></div>
@@ -372,7 +383,10 @@
     <div class="codigo" id="sCodigo"></div>
     <div class="selo" id="sSelo"></div>
     <div id="sCampos">
-      <label class="rotulo" for="sPreco">Preço</label>
+      <label class="rotulo" for="sCusto">Quanto paguei (custo)</label>
+      <input class="input" id="sCusto" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off" enterkeyhint="next">
+      <div class="sugestao" id="sSug"></div>
+      <label class="rotulo" for="sPreco">Preço de venda</label>
       <div class="preco-wrap"><span>R$</span><input class="input preco" id="sPreco" inputmode="decimal" placeholder="0,00" autocomplete="off" enterkeyhint="done"></div>
       <label class="rotulo" for="sNome">Nome (opcional)</label>
       <input class="input" id="sNome" placeholder="Ex.: Vestido midi floral" autocomplete="off" enterkeyhint="done">
@@ -491,7 +505,7 @@ async function conectar(){
     store.set('ck_cfg', CFG);
     fecharConfig();
     toast('Conectado');
-    carregarCatalogo();
+    carregarCatalogo(); carregarMult();
   }catch(e){
     CFG = antigo;
     toast(e.message, true);
@@ -502,12 +516,12 @@ async function conectar(){
 
 /* ================= Catálogo local (leitura instantânea) ================= */
 let CAT = new Map();
-(function(){ const c = store.get('ck_cat'); if (Array.isArray(c)) c.forEach(r => CAT.set(r[0], {n:r[1], p:r[2], s:r[3]})); })();
-function salvarCat(){ store.set('ck_cat', [...CAT].map(([c, v]) => [c, v.n, v.p, v.s])); }
+(function(){ const c = store.get('ck_cat'); if (Array.isArray(c)) c.forEach(r => CAT.set(r[0], {n:r[1], p:r[2], s:r[3], k:r[4] || 0})); })();
+function salvarCat(){ store.set('ck_cat', [...CAT].map(([c, v]) => [c, v.n, v.p, v.s, v.k || 0])); }
 async function carregarCatalogo(){
   try{
     const rows = await api('catalogo');
-    CAT = new Map(rows.map(r => [r[0], {n:r[1], p:r[2], s:r[3]}]));
+    CAT = new Map(rows.map(r => [r[0], {n:r[1], p:r[2], s:r[3], k:r[4] || 0}]));
     salvarCat();
   }catch(e){ toast(e.message, true); }
 }
@@ -745,7 +759,7 @@ async function adicionar(c, daCamera){
   if (!p){
     try{
       const r = await api('buscarPeca', c);
-      if (r.existe){ p = {n:r.nome, p:r.preco, s:r.status}; CAT.set(c, p); salvarCat(); }
+      if (r.existe){ p = {n:r.nome, p:r.preco, s:r.status, k:r.custo}; CAT.set(c, p); salvarCat(); }
     }catch(e){ bip(true); toast(e.message, true); return; }
   }
   if (!p){ bip(true); toast(c + ' sem preço. Precifique antes.', true); return; }
@@ -817,9 +831,69 @@ async function finalizar(){
 }
 
 /* ================= Precificar ================= */
-let sheetCod = null, precificadas = [];
+let sheetCod = null, precificadas = [], precoEditado = false;
 $('pCodigo').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); abrirPeca($('pCodigo').value); } });
 ['sPreco', 'sNome'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); salvarPreco(); } }));
+$('sCusto').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  if (num($('sPreco').value) > 0) salvarPreco(); else $('sPreco').focus();
+});
+$('sCusto').addEventListener('input', () => {
+  const s = sugestao(num($('sCusto').value));
+  if (s && !precoEditado) $('sPreco').value = s.toFixed(2).replace('.', ',');
+  atualizarLucro();
+});
+$('sPreco').addEventListener('input', () => { precoEditado = true; atualizarLucro(); });
+
+/* ---------- Sugestão de preço ---------- */
+let MULT = store.get('ck_mult') || 2.2;
+const MULTS = [2, 2.2, 2.5, 3];
+const fmtX = m => String(m).replace('.', ',') + 'x';
+
+// custo x multiplicador, arredondado para cima num preço "de loja" terminado em ,90
+function sugestao(custo){
+  if (!(custo > 0)) return 0;
+  const v = custo * MULT;
+  const r = v < 30 ? Math.ceil(v - 0.9) + 0.9 : Math.ceil((v + 0.1) / 10) * 10 - 0.1;
+  return Math.round(r * 100) / 100;
+}
+function atualizarLucro(){
+  const custo = num($('sCusto').value), preco = num($('sPreco').value), s = sugestao(custo);
+  const el = $('sSug');
+  if (!(custo > 0)){ el.innerHTML = `<span>Multiplicador ${fmtX(MULT)}</span><span>Digite o custo para sugerir</span>`; return; }
+  const lucro = preco > 0 ? preco - custo : 0;
+  el.innerHTML = `<button class="usar" onclick="usarSugestao()">Sugestão <b>${fmt(s)}</b></button>`
+    + (preco > 0 ? `<span>Lucro <b>${fmt(lucro)}</b> · ${(preco / custo).toFixed(1).replace('.', ',')}x</span>` : '');
+}
+function usarSugestao(){
+  const s = sugestao(num($('sCusto').value)); if (!s) return;
+  $('sPreco').value = s.toFixed(2).replace('.', ','); precoEditado = false; atualizarLucro();
+}
+function renderMults(){
+  const lista = MULTS.includes(MULT) ? MULTS : [...MULTS, MULT].sort((a, b) => a - b);
+  $('pMults').innerHTML = lista.map(m => `<button class="mult${m === MULT ? ' on' : ''}" onclick="definirMult(${m})">${fmtX(m)}</button>`).join('')
+    + `<button class="mult" onclick="outroMult()">Outro</button>`;
+}
+function outroMult(){
+  const t = prompt('Multiplicador (ex.: 2,4)', String(MULT).replace('.', ','));
+  if (t === null) return;
+  const m = num(t);
+  if (!(m >= 1 && m <= 10)){ toast('Use um número entre 1 e 10', true); return; }
+  definirMult(Math.round(m * 100) / 100);
+}
+async function definirMult(m){
+  MULT = m; store.set('ck_mult', m); renderMults();
+  toast('Multiplicador ' + fmtX(m));
+  try{ await api('salvarMultiplicador', m); }catch(e){ toast(e.message, true); }
+}
+async function carregarMult(){
+  try{
+    const c = await api('config');
+    if (c && c.multiplicador){ MULT = c.multiplicador; store.set('ck_mult', MULT); renderMults(); }
+  }catch(e){}
+}
+renderMults();
 
 function abrirPeca(c){
   c = norm(c);
@@ -830,15 +904,16 @@ function abrirPeca(c){
   Cam.pausar();
   $('pCodigo').value = '';
   sheetCod = c;
-  mostrarPeca(c, CAT.get(c));
+  const p = CAT.get(c);
+  mostrarPeca(c, p);
   $('veu').classList.add('on'); $('sheet').classList.add('on');
-  setTimeout(() => { if (!$('sSalvar').disabled) $('sPreco').focus(); }, 320);
+  setTimeout(() => { if (!$('sSalvar').disabled) (p ? $('sPreco') : $('sCusto')).focus(); }, 320);
   // confere na planilha em segundo plano (caso tenha sido alterada em outro aparelho)
   api('buscarPeca', c).then(r => {
     if (sheetCod !== c || !r.existe) return;
-    const p = {n:r.nome, p:r.preco, s:r.status}, ant = CAT.get(c);
-    CAT.set(c, p); salvarCat();
-    if (!ant || ant.s !== p.s || ant.p !== p.p) mostrarPeca(c, p, true);
+    const np = {n:r.nome, p:r.preco, s:r.status, k:r.custo}, ant = CAT.get(c);
+    CAT.set(c, np); salvarCat();
+    if (!ant || ant.s !== np.s || ant.p !== np.p || ant.k !== np.k) mostrarPeca(c, np, true);
   }).catch(() => {});
 }
 function mostrarPeca(c, p, manterDigitado){
@@ -848,10 +923,14 @@ function mostrarPeca(c, p, manterDigitado){
   $('sSelo').classList.toggle('esc', !!vendida);
   $('sCampos').style.display = vendida ? 'none' : 'block';
   $('sSalvar').disabled = !!vendida;
-  if (!manterDigitado || !$('sPreco').value){
+  const digitou = manterDigitado && ($('sPreco').value || $('sCusto').value);
+  if (!digitou){
     $('sPreco').value = p && !vendida ? p.p.toFixed(2).replace('.', ',') : '';
+    $('sCusto').value = p && p.k ? p.k.toFixed(2).replace('.', ',') : '';
     $('sNome').value = p ? p.n : '';
+    precoEditado = !!(p && !vendida);   // peça já precificada: não troca o preço sozinho
   }
+  atualizarLucro();
 }
 function fecharSheet(){
   $('veu').classList.remove('on'); $('sheet').classList.remove('on');
@@ -864,15 +943,18 @@ async function salvarPreco(){
   const c = sheetCod; if (!c) return;
   const preco = Math.round(num($('sPreco').value) * 100) / 100;
   if (!(preco > 0)){ bip(true); toast('Digite o preço', true); $('sPreco').focus(); return; }
+  const ct = $('sCusto').value.trim();
+  const custo = ct ? Math.round(num(ct) * 100) / 100 : null;
+  if (ct && !(custo >= 0)){ bip(true); toast('Custo inválido', true); $('sCusto').focus(); return; }
   const nome = $('sNome').value.trim();
   const anterior = CAT.get(c);
-  CAT.set(c, {n:nome, p:preco, s:'Em estoque'}); salvarCat();
+  CAT.set(c, {n:nome, p:preco, s:'Em estoque', k: custo != null ? custo : (anterior ? anterior.k : 0)}); salvarCat();
   const item = {c, n:nome, p:preco, ok:false};
   precificadas.unshift(item); renderPrecificadas();
   fecharSheet();
   toast(c + ' · ' + fmt(preco));
   try{
-    await api('salvarPeca', c, nome, preco);
+    await api('salvarPeca', c, nome, preco, custo);
     item.ok = true; renderPrecificadas();
   }catch(e){
     if (anterior) CAT.set(c, anterior); else CAT.delete(c);
@@ -963,6 +1045,8 @@ async function carregarResumo(){
           <div class="d">${r.hojeVendas} ${r.hojeVendas === 1 ? 'venda' : 'vendas'} · ${r.hojePecas} ${r.hojePecas === 1 ? 'peça' : 'peças'}</div></div>
         <div class="kpi"><div class="eyebrow">No mês</div><div class="v">${fmt(r.mesTotal)}</div><div class="d">${r.mesPecas} peças</div></div>
         <div class="kpi"><div class="eyebrow">Em estoque</div><div class="v">${r.estoqueQtd}</div><div class="d">${fmt(r.estoqueValor)}</div></div>
+        <div class="kpi largo"><div class="eyebrow">Lucro estimado no mês</div><div class="v">${fmt(r.lucroMes)}</div>
+          <div class="d">${r.pecasComCusto ? 'Sobre ' + r.pecasComCusto + (r.pecasComCusto === 1 ? ' peça vendida' : ' peças vendidas') + ' com custo cadastrado' : 'Cadastre o custo das peças para ver o lucro'}</div></div>
       </div>
       <div class="painel">
         <div class="painel-titulo"><span class="eyebrow">Últimas vendas</span></div>
@@ -975,7 +1059,7 @@ async function carregarResumo(){
 }
 
 /* ================= Início ================= */
-if (CFG){ $('app').style.display = 'block'; carregarCatalogo(); }
+if (CFG){ $('app').style.display = 'block'; carregarCatalogo(); carregarMult(); }
 else abrirConfig();
 atualizarSync();
 </script>
