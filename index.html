@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <style id="estiloPagina">@page{size:100mm 150mm;margin:0}</style>
 <style>
   :root{
@@ -525,64 +525,182 @@ function irPara(t){
   window.scrollTo(0, 0);
   if (t === 'resumo') carregarResumo();
 }
+/* Bloqueio de tela / troca de app: solta a câmera e religa sozinha ao voltar */
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) Cam.desligar();
-  else if (CFG) carregarCatalogo();
+  if (document.hidden){ Cam.desligar(true); return; }
+  if (CFG) carregarCatalogo();
+  Cam.religarSePreciso();
 });
+window.addEventListener('pageshow', () => Cam.religarSePreciso());
+window.addEventListener('pagehide', () => Cam.desligar(true));
 
-/* ================= Câmera (leitura contínua) ================= */
+/* ================= Câmera (leitura contínua, controle próprio) ================= */
 const Cam = {
-  inst: null, wrap: null, ativo: false, ult: '', ultT: 0, lidoT: null,
-  async ligar(wrapId, aoLer){
-    if (this.ativo && this.wrap && this.wrap.id === wrapId) return;
-    await this.desligar();
-    if (typeof Html5Qrcode === 'undefined'){ toast('Leitor não carregou. Verifique a internet.', true); return; }
+  stream: null, video: null, wrap: null, aoLer: null,
+  ativo: false, pausado: false, iniciando: false,
+  intencao: null,          // {wrapId, aoLer}: câmera que deveria estar ligada (para religar após bloqueio)
+  det: null, canvas: null, ctx: null,
+  loopT: null, ult: '', ultT: 0, lidoT: null, ultimoTempo: -1, travadoDesde: 0,
+
+  async ligar(wrapId, aoLer, silencioso){
+    if (this.iniciando) return;
+    if (this.ativo && this.wrap && this.wrap.id === wrapId){ this.pausado = false; return; }
+    this.desligar();
     this.wrap = $(wrapId); this.aoLer = aoLer;
+    this.intencao = {wrapId, aoLer};
     this.wrap.classList.add('on', 'carregando');
+    this.iniciando = true;
     try{
-      this.inst = new Html5Qrcode(wrapId + '-v', {
-        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-        experimentalFeatures: {useBarCodeDetectorIfSupported: true},
-        verbose: false
-      });
-      await this.inst.start(
-        {facingMode: 'environment'},
-        {fps: 15, videoConstraints: {facingMode: 'environment', width: {ideal: 1280}, height: {ideal: 720}}},
-        txt => this._lido(txt), () => {}
-      );
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('sem-suporte');
+      const stream = await this._abrirStream();
+      if (this.intencao === null || this.intencao.wrapId !== wrapId || document.hidden){   // usuário saiu enquanto abria
+        stream.getTracks().forEach(t => t.stop()); return;
+      }
+      this.stream = stream;
+      const v = document.createElement('video');
+      v.setAttribute('playsinline', ''); v.setAttribute('muted', ''); v.muted = true; v.autoplay = true;
+      v.srcObject = stream;
+      const box = this.wrap.querySelector('.video'); box.innerHTML = ''; box.appendChild(v);
+      this.video = v;
+      await v.play();
+
+      const track = stream.getVideoTracks()[0];
+      track.addEventListener('ended', () => { if (this.stream === stream) this._caiu(); });
+      try{ await track.applyConstraints({advanced: [{focusMode: 'continuous'}]}); }catch(e){}
+      let caps = {};
+      try{ caps = track.getCapabilities ? track.getCapabilities() : {}; }catch(e){}
+      this.wrap.querySelector('.luz').style.display = caps.torch ? 'flex' : 'none';
+
+      if (!this.det && 'BarcodeDetector' in window){
+        try{
+          const f = await BarcodeDetector.getSupportedFormats();
+          if (f.includes('qr_code')) this.det = new BarcodeDetector({formats: ['qr_code']});
+        }catch(e){}
+      }
       this.ativo = true;
+      this.pausado = (wrapId === 'camPrec' && !!sheetCod);   // se a ficha de preço estiver aberta, fica em pausa
+      this.ultimoTempo = -1; this.travadoDesde = Date.now();
       this.wrap.classList.remove('carregando');
-      try{ await this.inst.applyVideoConstraints({advanced: [{focusMode: 'continuous'}]}); }catch(e){}
-      try{
-        const caps = this.inst.getRunningTrackCapabilities();
-        this.wrap.querySelector('.luz').style.display = caps && caps.torch ? 'flex' : 'none';
-      }catch(e){}
+      this._loop();
     }catch(e){
-      this.wrap.classList.remove('on', 'carregando');
-      this.inst = null;
-      toast('Não consegui abrir a câmera. Libere a permissão no navegador.', true);
+      this.desligar(silencioso);   // em religada automática, guarda a intenção para tentar de novo
+      if (!silencioso){
+        const n = e && e.name;
+        toast(n === 'NotAllowedError' || n === 'SecurityError'
+          ? 'Permissão da câmera negada. Libere nas configurações do navegador.'
+          : n === 'NotReadableError' || n === 'AbortError'
+          ? 'A câmera está ocupada. Feche outros apps de câmera e toque de novo.'
+          : 'Não consegui abrir a câmera. Toque de novo.', true);
+      }
+    }finally{
+      this.iniciando = false;
     }
   },
+
+  async _abrirStream(){
+    const ideal = {audio: false, video: {facingMode: {ideal: 'environment'}, width: {ideal: 1280}, height: {ideal: 720}}};
+    try{
+      return await navigator.mediaDevices.getUserMedia(ideal);
+    }catch(e){
+      if (e.name === 'NotAllowedError' || e.name === 'SecurityError') throw e;
+      // o sistema ainda está liberando a câmera (comum logo após desbloquear): espera e tenta de novo
+      await new Promise(r => setTimeout(r, 800));
+      try{ return await navigator.mediaDevices.getUserMedia(ideal); }
+      catch(e2){
+        await new Promise(r => setTimeout(r, 800));
+        return await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: 'environment'}});
+      }
+    }
+  },
+
+  _loop(){
+    clearTimeout(this.loopT);
+    const tick = async () => {
+      if (!this.ativo) return;
+      const v = this.video;
+      if (v && !this.pausado){
+        // vigia: se a imagem congelar por 4 s (acontece no iPhone após bloqueio), reinicia a câmera
+        if (v.currentTime !== this.ultimoTempo){ this.ultimoTempo = v.currentTime; this.travadoDesde = Date.now(); }
+        else if (Date.now() - this.travadoDesde > 4000){ this._reiniciar(); return; }
+        if (v.readyState >= 2){
+          try{
+            const txt = await this._detectar();
+            if (txt && this.ativo && !this.pausado) this._lido(txt);
+          }catch(e){}
+        }
+      }else{
+        this.travadoDesde = Date.now();
+      }
+      if (this.ativo) this.loopT = setTimeout(tick, this.det ? 70 : 110);
+    };
+    tick();
+  },
+
+  async _detectar(){
+    const v = this.video;
+    if (this.det){
+      const r = await this.det.detect(v);
+      return r.length ? r[0].rawValue : null;
+    }
+    if (typeof jsQR === 'undefined') return null;
+    const vw = v.videoWidth, vh = v.videoHeight;
+    if (!vw || !vh) return null;
+    const lado = Math.floor(Math.min(vw, vh) * 0.7);      // lê só o centro (onde fica a mira): mais rápido
+    const alvo = Math.min(lado, 520);
+    if (!this.canvas){ this.canvas = document.createElement('canvas'); this.ctx = this.canvas.getContext('2d', {willReadFrequently: true}); }
+    if (this.canvas.width !== alvo){ this.canvas.width = this.canvas.height = alvo; }
+    this.ctx.drawImage(v, (vw - lado) / 2, (vh - lado) / 2, lado, lado, 0, 0, alvo, alvo);
+    const img = this.ctx.getImageData(0, 0, alvo, alvo);
+    const r = jsQR(img.data, alvo, alvo, {inversionAttempts: 'dontInvert'});
+    return r ? r.data : null;
+  },
+
   _lido(txt){
     const c = norm(txt), agora = Date.now();
-    if (c === this.ult && agora - this.ultT < 2500) return;   // evita ler a mesma etiqueta repetidas vezes
+    if (c === this.ult && agora < this.ultT + 2500) return;   // não lê a mesma etiqueta repetidas vezes
     this.ult = c; this.ultT = agora;
     this.wrap.classList.remove('flash'); void this.wrap.offsetWidth; this.wrap.classList.add('flash');
     const l = this.wrap.querySelector('.lido'); l.textContent = c; l.classList.add('mostra');
     clearTimeout(this.lidoT); this.lidoT = setTimeout(() => l.classList.remove('mostra'), 1200);
     if (this.aoLer) this.aoLer(c);
   },
-  pausar(){ try{ if (this.ativo) this.inst.pause(true); }catch(e){} },
-  retomar(){ try{ if (this.ativo) this.inst.resume(); }catch(e){} },
-  async desligar(){
-    const inst = this.inst, wrap = this.wrap;
-    this.inst = null; this.ativo = false;
-    if (inst){ try{ await inst.stop(); }catch(e){} try{ inst.clear(); }catch(e){} }
-    if (wrap){ wrap.classList.remove('on', 'carregando'); const b = wrap.querySelector('.luz'); b.classList.remove('on'); b.style.display = 'none'; }
+
+  _caiu(){   // o sistema derrubou a câmera (bloqueio, ligação, outro app)
+    this.desligar(true);
+    if (!document.hidden) this.religarSePreciso();
   },
+  _reiniciar(){
+    const i = this.intencao;
+    this.desligar(true);
+    if (i) setTimeout(() => this.ligar(i.wrapId, i.aoLer, true), 300);
+  },
+  religarSePreciso(){
+    const i = this.intencao;
+    if (!i || this.ativo || this.iniciando || document.hidden) return;
+    if (!$('t-' + telaAtual).contains($(i.wrapId))) return;
+    setTimeout(() => { if (!this.ativo && this.intencao === i) this.ligar(i.wrapId, i.aoLer, true); }, 500);
+  },
+
+  pausar(){ this.pausado = true; },
+  retomar(){ this.pausado = false; },
+
+  desligar(manterIntencao){
+    clearTimeout(this.loopT);
+    this.ativo = false; this.pausado = false;
+    if (this.stream){ this.stream.getTracks().forEach(t => { try{ t.stop(); }catch(e){} }); this.stream = null; }
+    if (this.video){ try{ this.video.pause(); this.video.srcObject = null; }catch(e){} this.video.remove(); this.video = null; }
+    if (this.wrap){
+      this.wrap.classList.remove('on', 'carregando');
+      const b = this.wrap.querySelector('.luz'); b.classList.remove('on'); b.style.display = 'none';
+    }
+    if (!manterIntencao) this.intencao = null;
+  },
+
   async lanterna(btn){
+    const track = this.stream && this.stream.getVideoTracks()[0];
+    if (!track) return;
     const ligar = !btn.classList.contains('on');
-    try{ await this.inst.applyVideoConstraints({advanced: [{torch: ligar}]}); btn.classList.toggle('on', ligar); }catch(e){}
+    try{ await track.applyConstraints({advanced: [{torch: ligar}]}); btn.classList.toggle('on', ligar); }catch(e){}
   }
 };
 function ligarCamera(id){
