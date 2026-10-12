@@ -325,7 +325,7 @@
     <section class="tela" id="t-etiquetas">
       <div class="eyebrow">Impressão</div>
       <h1>Etiquetas QR</h1>
-      <p class="sub">Use no computador ligado à impressora térmica.</p>
+      <p class="sub">Gere as etiquetas e envie para o app da impressora Bluetooth, ou imprima pelo computador.</p>
 
       <div class="painel" style="padding:4px 18px 18px">
         <div class="grade2">
@@ -354,7 +354,11 @@
       <div class="caixa" id="eAcoes" style="display:none">
         <div class="eyebrow" style="color:#9d9d9d" id="eTitulo"></div>
         <div style="font-family:var(--serif);font-size:26px;margin:6px 0 14px" id="eInfo"></div>
-        <button class="btn branco" onclick="window.print()"><svg><use href="#i-imp"/></svg>Imprimir</button>
+        <div class="stack">
+          <button class="btn branco" id="ePdf" onclick="exportar('pdf')" disabled><svg><use href="#i-imp"/></svg><span>Preparando…</span></button>
+          <button class="btn" id="ePng" style="border:1px solid #333" onclick="exportar('png')" disabled><svg><use href="#i-qr"/></svg><span>Baixar imagens (PNG)</span></button>
+          <button class="link" style="color:#8d8d8d" onclick="window.print()">Imprimir direto (computador com USB)</button>
+        </div>
       </div>
       <div style="height:14px"></div>
     </section>
@@ -1010,7 +1014,105 @@ function renderEtiquetas(codigos, titulo){
   $('eInfo').textContent = `${codigos.length} códigos · ${pags} ${pags === 1 ? 'etiqueta' : 'etiquetas'}`;
   $('eAcoes').style.display = 'block';
   $('eAcoes').scrollIntoView({behavior:'smooth', block:'center'});
+  prepararArquivos(codigos, k);
 }
+/* ---------- Arquivos para o app da impressora (Bluetooth) ---------- */
+// Desenha cada etiqueta na resolução exata da impressora: 203 dpi = 8 pontos por mm.
+// O QR usa 4 pontos por "quadradinho" (21 x 4 = 84 pontos ≈ 1 cm), sem borrar.
+const DPM = 8, MOD = 4;
+let etqArquivos = null, etqGeracao = 0;
+const ehCelular = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+
+function desenharPaginas(codigos, k){
+  const W = Math.round(k.L * DPM), H = Math.round(k.A * DPM);
+  const porPag = k.col * k.lin, cw = W / k.col, ch = H / k.lin;
+  const fonte = 16, gap = 8, paginas = [];
+  for (let i = 0; i < codigos.length; i += porPag){
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const g = cv.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+    codigos.slice(i, i + porPag).forEach((cod, j) => {
+      const x0 = (j % k.col) * cw, y0 = Math.floor(j / k.col) * ch;
+      const qr = qrcode(1, 'M'); qr.addData(cod, 'Alphanumeric'); qr.make();
+      const n = qr.getModuleCount(), lado = n * MOD;
+      const bx = Math.round(x0 + (cw - lado) / 2), by = Math.round(y0 + (ch - (lado + gap + fonte)) / 2);
+      g.fillStyle = '#000';
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) g.fillRect(bx + c * MOD, by + r * MOD, MOD, MOD);
+      g.font = `bold ${fonte}px Arial, Helvetica, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'top';
+      g.fillText(cod, Math.round(x0 + cw / 2), by + lado + gap);
+      if (k.corte){
+        g.save(); g.setLineDash([4, 4]); g.lineWidth = 1; g.strokeStyle = '#000';
+        g.strokeRect(Math.round(x0) + .5, Math.round(y0) + .5, Math.round(cw) - 1, Math.round(ch) - 1);
+        g.restore();
+      }
+    });
+    paginas.push(cv);
+  }
+  return paginas;
+}
+
+function carregarScript(src){
+  return new Promise((ok, err) => {
+    if (document.querySelector(`script[src="${src}"]`) && window.jspdf) return ok();
+    const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => err(new Error('Sem internet para gerar o PDF.'));
+    document.head.appendChild(s);
+  });
+}
+const blobDe = cv => new Promise(ok => cv.toBlob(ok, 'image/png'));
+
+async function prepararArquivos(codigos, k){
+  const minha = ++etqGeracao;
+  etqArquivos = null; estadoExport(false);
+  try{
+    const paginas = desenharPaginas(codigos, k);
+    const base = 'etiquetas-' + (codigos[0] || 'ck') + (codigos.length > 1 ? '-a-' + codigos[codigos.length - 1] : '');
+    const pngs = [];
+    for (let i = 0; i < paginas.length; i++){
+      const b = await blobDe(paginas[i]);
+      pngs.push(new File([b], base + (paginas.length > 1 ? '-' + (i + 1) : '') + '.png', {type: 'image/png'}));
+    }
+    await carregarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const orient = k.L > k.A ? 'l' : 'p';
+    const doc = new jspdf.jsPDF({unit: 'mm', format: [k.L, k.A], orientation: orient, compress: true});
+    paginas.forEach((cv, i) => {
+      if (i) doc.addPage([k.L, k.A], orient);
+      doc.addImage(cv, 'PNG', 0, 0, k.L, k.A, undefined, 'FAST');
+    });
+    const pdf = new File([doc.output('blob')], base + '.pdf', {type: 'application/pdf'});
+    if (minha !== etqGeracao) return;
+    etqArquivos = {pdf, pngs};
+    estadoExport(true);
+  }catch(e){
+    if (minha === etqGeracao){ toast(e.message, true); estadoExport(false, true); }
+  }
+}
+
+function estadoExport(pronto, erro){
+  $('ePdf').disabled = $('ePng').disabled = !pronto;
+  $('ePdf').lastChild.textContent = pronto ? (ehCelular ? 'Enviar PDF para o app da impressora' : 'Baixar PDF') : erro ? 'Não foi possível gerar' : 'Preparando…';
+  $('ePng').lastChild.textContent = ehCelular ? 'Enviar como imagens (PNG)' : 'Baixar imagens (PNG)';
+}
+
+function baixar(arquivos){
+  arquivos.forEach((f, i) => setTimeout(() => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(f); a.download = f.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }, i * 400));
+}
+
+async function exportar(tipo){
+  if (!etqArquivos) return;
+  const files = tipo === 'pdf' ? [etqArquivos.pdf] : etqArquivos.pngs;
+  if (ehCelular && navigator.canShare && navigator.canShare({files})){
+    try{ await navigator.share({files, title: 'Etiquetas C&K Modas'}); return; }
+    catch(e){ if (e.name === 'AbortError') return; }
+  }
+  baixar(files);
+  toast(files.length > 1 ? files.length + ' arquivos salvos em Downloads' : 'Arquivo salvo em Downloads');
+}
+
 function folhaTeste(){
   const k = cfgEtq(), n = k.col * k.lin, cod = [];
   for (let i = 1; i <= n; i++) cod.push('TESTE' + String(i).padStart(3, '0'));
