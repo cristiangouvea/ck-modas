@@ -114,6 +114,9 @@
   .caixa .input{background:#141414;border-color:#2a2a2a;color:#fff;height:48px;font-size:16px}
   .caixa .input:focus{border-color:#fff}
   .caixa .input::placeholder{color:#5c5c5c}
+  .pct-wrap{position:relative;width:120px}
+  .pct-wrap .input{text-align:right;padding-right:38px}
+  .pct-wrap span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#9d9d9d;font-size:16px;pointer-events:none}
   .pags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
   .pag{height:40px;padding:0 16px;border-radius:999px;border:1px solid #333;background:transparent;color:#cfcfcf;font-size:13px;letter-spacing:.04em}
   .pag.on{background:#fff;border-color:#fff;color:#000;font-weight:500}
@@ -282,7 +285,8 @@
 
       <div class="caixa">
         <div class="lin"><span>Subtotal</span><b id="vSub">R$ 0,00</b></div>
-        <div class="lin"><span>Desconto</span><input class="input" id="vDesc" style="max-width:150px;text-align:right" inputmode="decimal" placeholder="R$ ou %" oninput="atualizarTotal()"></div>
+        <div class="lin"><span>Desconto</span><div class="pct-wrap"><input class="input" id="vDesc" inputmode="decimal" placeholder="0" maxlength="5" oninput="atualizarTotal()"><span>%</span></div></div>
+        <div class="lin" id="vDescLin" style="display:none"><span>Valor do desconto</span><b id="vDescVal"></b></div>
         <div class="pags" id="vPags"></div>
         <div class="total"><span class="eyebrow" style="color:#9d9d9d">Total</span><span class="valor" id="vTotal">R$ 0,00</span></div>
         <button class="btn branco" id="vFinalizar" onclick="finalizar()" style="margin-top:16px">Finalizar venda</button>
@@ -785,14 +789,16 @@ function renderVenda(){
 function removerItem(k){ venda.splice(k, 1); renderVenda(); }
 function calcular(){
   const sub = venda.reduce((s, i) => s + i.p, 0);
-  const t = String($('vDesc').value || '').trim();
-  let desc = t.endsWith('%') ? sub * (num(t.slice(0, -1)) || 0) / 100 : (num(t) || 0);
-  desc = Math.round(desc * 100) / 100;
-  return {sub, desc, total: Math.max(0, sub - desc)};
+  let pct = num(String($('vDesc').value || '').replace('%', '')) || 0;
+  pct = Math.min(Math.max(pct, 0), 100);
+  const desc = Math.round(sub * pct) / 100;
+  return {sub, pct, desc, total: Math.max(0, sub - desc)};
 }
 function atualizarTotal(){
-  const {sub, total} = calcular();
+  const {sub, pct, desc, total} = calcular();
   $('vSub').textContent = fmt(sub);
+  $('vDescLin').style.display = pct > 0 ? 'flex' : 'none';
+  $('vDescVal').textContent = '− ' + fmt(desc) + ' (' + String(pct).replace('.', ',') + '%)';
   $('vTotal').textContent = fmt(total);
   resetConfirmar();
 }
