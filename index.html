@@ -120,6 +120,11 @@
   .pags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
   .pag{height:40px;padding:0 16px;border-radius:999px;border:1px solid #333;background:transparent;color:#cfcfcf;font-size:13px;letter-spacing:.04em}
   .pag.on{background:#fff;border-color:#fff;color:#000;font-weight:500}
+  /* formas de pagamento do caixa: 3 em cima, 2 centralizadas embaixo */
+  #vPags{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  #vPags .pag{grid-column:span 2;width:100%;padding:0 4px}
+  #vPags .pag:nth-child(4){grid-column:2 / span 2}
+  #vPags .pag:nth-child(5){grid-column:4 / span 2}
   .caixa .btn{margin-top:6px}
   .btn.confirmar{animation:respira 1s ease-in-out infinite}
 
