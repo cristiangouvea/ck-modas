@@ -227,6 +227,29 @@
   .badge{position:absolute;top:3px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#fff;color:#000;font-size:10px;font-weight:600;letter-spacing:0;display:none;place-items:center}
   .nav button.on .badge{background:#000;color:#fff}
 
+  /* ---------- Clientes / Fiado ---------- */
+  .seg{display:flex;background:#e9e9e5;border-radius:14px;padding:4px;margin:4px 0 16px}
+  .seg button{flex:1;height:40px;border:0;border-radius:11px;background:transparent;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);position:relative}
+  .seg button.on{background:var(--paper);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .seg .badge{left:auto;right:10px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff}
+  .fiado-total{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:18px 4px 4px}
+  .fiado-total b{font-family:var(--serif);font-weight:400;font-size:28px;margin-right:auto;margin-left:10px}
+  .valor-grande{font-family:var(--serif);font-size:46px;line-height:1.05;margin:8px 0 6px}
+  .fc-venc{display:flex;align-items:center;gap:8px;color:#9d9d9d;font-size:14px;padding-bottom:6px}
+  .fc-venc.vencido{color:#fff;font-weight:500}
+  .fc-venc svg{width:16px;height:16px}
+  .tag.esc{background:var(--ink)!important;color:#fff}
+  .pr.menos{color:var(--muted)}
+  .cond-acoes.solto{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);margin-top:14px;overflow:hidden}
+  .caixa select.input{appearance:none;-webkit-appearance:none}
+  .caixa input[type=date]{color-scheme:dark}
+  input[type=date].input{min-height:52px}
+  .fiado-box{border-top:1px solid #262626;margin-top:4px;padding-top:4px}
+  .fiado-box .linha2{display:flex;gap:8px}
+  .fiado-box .linha2 .input:first-child{flex:1}
+  .fiado-box .linha2 select{width:130px}
+  .sucesso a.btn{margin-top:18px;width:auto;padding:0 22px}
+
   @keyframes surge{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes entra{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
   @keyframes laser{0%,100%{transform:translateY(-58px)}50%{transform:translateY(58px)}}
@@ -260,6 +283,8 @@
   <symbol id="i-imp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></symbol>
   <symbol id="i-cabide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.5a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2V9.5"/><path d="M12 9.5 2.7 15.8a1 1 0 0 0 .6 1.8h17.4a1 1 0 0 0 .6-1.8L12 9.5z"/></symbol>
   <symbol id="i-whats" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.6a8.6 8.6 0 0 1-12.7 7.6L3 20.5l1.4-4.6a8.6 8.6 0 1 1 16.1-4.3z"/><path d="M9.2 8.6c-.3 2.6 2.7 6 5.6 6.1l1.1-1.3-1.9-1-1 .7c-.9-.4-1.8-1.3-2.2-2.2l.7-1-1-1.9-1.3.6z" stroke-width="1.2"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-pessoa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c.8-3.8 3.9-6 7.5-6s6.7 2.2 7.5 6"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
 </svg>
 
@@ -323,6 +348,20 @@
         <div class="lin"><span>Desconto</span><div class="pct-wrap"><input class="input" id="vDesc" inputmode="decimal" placeholder="0" maxlength="5" oninput="atualizarTotal()"><span>%</span></div></div>
         <div class="lin" id="vDescLin" style="display:none"><span>Valor do desconto</span><b id="vDescVal"></b></div>
         <div class="pags" id="vPags"></div>
+        <div id="vFiado" class="fiado-box" style="display:none">
+          <label class="rotulo" for="vfNome" style="color:#9d9d9d">Cliente</label>
+          <input class="input" id="vfNome" list="cClientes" placeholder="Nome da cliente" autocomplete="off" autocapitalize="words">
+          <label class="rotulo" for="vfWhats" style="color:#9d9d9d">WhatsApp</label>
+          <input class="input" id="vfWhats" inputmode="tel" placeholder="(17) 99999-9999" autocomplete="off">
+          <label class="rotulo" for="vfVenc" style="color:#9d9d9d">Data combinada para pagar</label>
+          <input class="input" id="vfVenc" type="date">
+          <label class="rotulo" for="vfEntrada" style="color:#9d9d9d">Entrada paga agora (opcional)</label>
+          <div class="linha2">
+            <input class="input" id="vfEntrada" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off" oninput="atualizarTotal()">
+            <select class="input" id="vfForma"><option>Pix</option><option>Dinheiro</option><option>Débito</option><option>Crédito</option></select>
+          </div>
+          <div class="lin" style="margin-top:10px"><span>Vai para a conta</span><b id="vfConta">R$ 0,00</b></div>
+        </div>
         <div class="total"><span class="eyebrow" style="color:#9d9d9d">Total</span><span class="valor" id="vTotal">R$ 0,00</span></div>
         <button class="btn branco" id="vFinalizar" onclick="finalizar()" style="margin-top:16px">Finalizar venda</button>
         <button class="link" style="color:#777" onclick="limparVenda()">Limpar sacola</button>
@@ -364,10 +403,16 @@
     <section class="tela" id="t-condicional">
 
       <!-- Lista de condicionais em aberto -->
+      <div id="cTopo">
+        <div class="eyebrow">Condicional e fiado</div>
+        <h1>Clientes</h1>
+        <div class="seg">
+          <button data-m="lista" class="on" onclick="cModo('lista')">Condicional<span class="badge" id="segCond"></span></button>
+          <button data-m="fiado" onclick="cModo('fiado')">Fiado<span class="badge" id="segFiado"></span></button>
+        </div>
+      </div>
+
       <div id="cModo-lista" class="cmodo">
-        <div class="eyebrow">Experimentar em casa</div>
-        <h1>Condicional</h1>
-        <p class="sub">Peças que as clientes levaram para provar.</p>
         <button class="btn" onclick="novoCondicional()"><svg><use href="#i-cabide"/></svg>Novo condicional</button>
         <div id="cAviso"></div>
         <div id="cLista"><div class="vazio">Carregando…</div></div>
@@ -443,6 +488,67 @@
           <a class="btn" id="dWhats" target="_blank" rel="noopener" style="margin-top:10px;border:1px solid #333"><svg><use href="#i-whats"/></svg>Lembrar no WhatsApp</a>
         </div>
       </div>
+
+      <!-- FIADO: lista de contas -->
+      <div id="cModo-fiado" class="cmodo" style="display:none">
+        <button class="btn claro" onclick="abrirSaldoInicial()">+ Conta antiga (caderno)</button>
+        <div id="fLista"><div class="vazio">Carregando…</div></div>
+      </div>
+
+      <!-- FIADO: conta da cliente -->
+      <div id="cModo-fcli" class="cmodo" style="display:none">
+        <button class="voltar" onclick="cModo('fiado')">‹ Fiado</button>
+        <div class="eyebrow" id="fcWhats"></div>
+        <h1 id="fcNome"></h1>
+
+        <div class="caixa">
+          <div class="eyebrow" style="color:#9d9d9d">Saldo devedor</div>
+          <div class="valor-grande" id="fcSaldo">R$ 0,00</div>
+          <div class="fc-venc" id="fcVenc"></div>
+
+          <label class="rotulo" for="fcValor" style="color:#9d9d9d">Valor recebido</label>
+          <input class="input" id="fcValor" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off" oninput="atualizarRestante()">
+          <div class="pags" id="fcFormas"></div>
+          <div id="fcNovaWrap" style="display:none">
+            <label class="rotulo" for="fcNova" style="color:#9d9d9d">Nova data para o restante (opcional)</label>
+            <input class="input" id="fcNova" type="date">
+          </div>
+          <div class="lin"><span>Fica devendo</span><b id="fcRestante">R$ 0,00</b></div>
+          <button class="btn branco" id="fcReceber" onclick="receberPagamento()" style="margin-top:14px">Receber pagamento</button>
+          <div id="fcRecibo"></div>
+        </div>
+
+        <div class="cond-acoes solto">
+          <button onclick="mudarData()"><svg><use href="#i-cal"/></svg>Mudar data</button>
+          <a id="fcWhatsBtn" target="_blank" rel="noopener"><svg><use href="#i-whats"/></svg>Enviar extrato</a>
+        </div>
+        <input type="date" id="fcMudar" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" onchange="salvarNovaData(this.value)">
+
+        <div class="painel">
+          <div class="painel-titulo"><span class="eyebrow">Extrato</span></div>
+          <div id="fcExtrato"></div>
+        </div>
+      </div>
+
+      <!-- FIADO: cadastrar conta antiga -->
+      <div id="cModo-fini" class="cmodo" style="display:none">
+        <button class="voltar" onclick="cModo('fiado')">‹ Fiado</button>
+        <h1>Conta antiga</h1>
+        <p class="sub">Para quem já deve na loja (o caderninho). Lance o valor total que ela deve hoje.</p>
+        <div class="painel" style="padding:4px 18px 18px">
+          <label class="rotulo" for="fiNome">Nome da cliente</label>
+          <input class="input" id="fiNome" list="cClientes" placeholder="Ex.: Maria Souza" autocomplete="off" autocapitalize="words">
+          <label class="rotulo" for="fiWhats">WhatsApp</label>
+          <input class="input" id="fiWhats" inputmode="tel" placeholder="(17) 99999-9999" autocomplete="off">
+          <label class="rotulo" for="fiValor">Quanto ela deve</label>
+          <input class="input" id="fiValor" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off">
+          <label class="rotulo" for="fiVenc">Data combinada para pagar</label>
+          <input class="input" id="fiVenc" type="date">
+          <label class="rotulo" for="fiObs">Observação (opcional)</label>
+          <input class="input" id="fiObs" placeholder="Ex.: compras de setembro" autocomplete="off">
+          <button class="btn" id="fiSalvar" style="margin-top:18px" onclick="salvarSaldoInicial()">Cadastrar conta</button>
+        </div>
+      </div>
     </section>
 
     <!-- ETIQUETAS -->
@@ -499,7 +605,7 @@
   <nav class="nav"><div class="barra">
     <button data-t="vender" class="on"><svg><use href="#i-sacola"/></svg>Vender</button>
     <button data-t="precificar"><svg><use href="#i-tag"/></svg>Preços</button>
-    <button data-t="condicional"><svg><use href="#i-cabide"/></svg>Condicional<span class="badge"></span></button>
+    <button data-t="condicional"><svg><use href="#i-pessoa"/></svg>Clientes<span class="badge"></span></button>
     <button data-t="etiquetas"><svg><use href="#i-qr"/></svg>Etiquetas</button>
     <button data-t="resumo"><svg><use href="#i-graf"/></svg>Resumo</button>
   </div></nav>
@@ -533,6 +639,7 @@
   <div class="eyebrow" style="color:#9d9d9d">Venda registrada</div>
   <div class="valor" id="sucValor"></div>
   <div style="color:#8d8d8d;font-size:14px" id="sucInfo"></div>
+  <div id="sucLink" onclick="event.stopPropagation();setTimeout(()=>$('sucesso').classList.remove('on'),400)" style="text-align:center"></div>
 </div>
 
 <!-- Etiquetas para impressão -->
@@ -542,7 +649,7 @@
 /* ================= Utilidades ================= */
 const $ = id => document.getElementById(id);
 const RE_COD = /^CK\d{5}$/;
-const PAGAMENTOS = ['Pix', 'Dinheiro', 'Débito', 'Crédito', 'Crediário'];
+const PAGAMENTOS = ['Pix', 'Dinheiro', 'Débito', 'Crédito', 'Fiado'];
 const fmt = v => Number(v || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm = c => String(c || '').trim().toUpperCase();
@@ -668,6 +775,7 @@ function irPara(t){
   window.scrollTo(0, 0);
   if (t === 'resumo') carregarResumo();
   if (t === 'condicional' && modoCond === 'lista') carregarConds();
+  if (t === 'condicional' && modoCond === 'fiado') carregarFiado();
 }
 /* Bloqueio de tela / troca de app: solta a câmera e religa sozinha ao voltar */
 document.addEventListener('visibilitychange', () => {
@@ -886,8 +994,9 @@ $('vPags').innerHTML = PAGAMENTOS.map(p => `<button class="pag${p === pagamento 
 $('vPags').onclick = e => {
   const b = e.target.closest('.pag'); if (!b) return;
   pagamento = b.dataset.p;
-  document.querySelectorAll('.pag').forEach(x => x.classList.toggle('on', x === b));
+  $('vPags').querySelectorAll('.pag').forEach(x => x.classList.toggle('on', x === b));
   resetConfirmar();
+  mostrarFiadoCaixa();
 };
 $('vCodigo').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); adicionarDigitado(); } });
 function adicionarDigitado(){ const c = $('vCodigo').value; $('vCodigo').value = ''; adicionar(c); }
@@ -936,18 +1045,33 @@ function atualizarTotal(){
   $('vDescLin').style.display = pct > 0 ? 'flex' : 'none';
   $('vDescVal').textContent = '− ' + fmt(desc) + ' (' + String(pct).replace('.', ',') + '%)';
   $('vTotal').textContent = fmt(total);
+  if (pagamento === 'Fiado'){
+    const ent = Math.max(0, num($('vfEntrada').value) || 0);
+    $('vfConta').textContent = fmt(Math.max(0, total - ent));
+  }
   resetConfirmar();
 }
 function resetConfirmar(){
   confirmando = false; clearTimeout(confirmT);
   const b = $('vFinalizar'); b.classList.remove('confirmar'); b.textContent = 'Finalizar venda';
 }
-function limparVenda(){ venda = []; vendaCond = null; $('vDesc').value = ''; renderVenda(); }
+function limparVenda(){ venda = []; vendaCond = null; $('vDesc').value = ''; limparFiadoCaixa(); renderVenda(); }
 
 async function finalizar(){
   if (!venda.length){ toast('A sacola está vazia', true); return; }
   const {sub, desc, total} = calcular();
   if (desc < 0 || desc > sub){ toast('Desconto inválido', true); return; }
+  let fiado = null;
+  if (pagamento === 'Fiado'){
+    fiado = {
+      cliente: $('vfNome').value.trim().replace(/\s+/g, ' '), whats: $('vfWhats').value.replace(/\D/g, ''),
+      venc: $('vfVenc').value, entrada: Math.round((num($('vfEntrada').value) || 0) * 100) / 100, formaEntrada: $('vfForma').value
+    };
+    if (!fiado.cliente){ toast('Digite o nome da cliente do fiado', true); $('vfNome').focus(); return; }
+    if (fiado.whats.length < 10){ toast('Digite o WhatsApp com DDD', true); $('vfWhats').focus(); return; }
+    if (!fiado.venc){ toast('Escolha a data combinada', true); return; }
+    if (fiado.entrada < 0 || fiado.entrada >= total){ toast('A entrada precisa ser menor que o total', true); return; }
+  }
   const b = $('vFinalizar');
   if (!confirmando){   // 1º toque pede confirmação, 2º toque finaliza
     confirmando = true;
@@ -960,14 +1084,20 @@ async function finalizar(){
   b.disabled = true; b.textContent = 'Registrando…';
   Cam.pausar();
   try{
-    const r = await api('finalizarVenda', venda.map(i => i.c), desc, pagamento, vendaCond ? vendaCond.id : '');
+    const r = await api('finalizarVenda', venda.map(i => i.c), desc, pagamento, vendaCond ? vendaCond.id : '', fiado);
     venda.forEach(i => { const p = CAT.get(i.c); if (p) p.s = 'Vendida'; });
     salvarCat();
     $('sucValor').textContent = fmt(r.total);
-    $('sucInfo').textContent = r.qtd + (r.qtd === 1 ? ' peça · ' : ' peças · ') + pagamento + (vendaCond ? ' · ' + vendaCond.cliente : '');
+    $('sucInfo').textContent = r.qtd + (r.qtd === 1 ? ' peça · ' : ' peças · ') + pagamento + (fiado ? ' · ' + fiado.cliente : vendaCond ? ' · ' + vendaCond.cliente : '');
     if (vendaCond) carregarConds();
+    $('sucLink').innerHTML = '';
+    if (r.fiado){
+      lembrarCliente(fiado.cliente, fiado.whats);
+      $('sucLink').innerHTML = `<a class="btn branco" href="${linkWhats(fiado.whats, msgComprovante(fiado, r.total, r.fiado.saldo, fiado.venc))}" target="_blank" rel="noopener"><svg><use href="#i-whats"/></svg>Enviar comprovante</a><div style="color:#777;font-size:12px;margin-top:14px;letter-spacing:.1em;text-transform:uppercase">Toque fora para fechar</div>`;
+      carregarFiado();
+    }
     $('sucesso').classList.add('on');
-    setTimeout(() => $('sucesso').classList.remove('on'), 1800);
+    if (!r.fiado) setTimeout(() => $('sucesso').classList.remove('on'), 1800);
     limparVenda();
   }catch(e){
     bip(true); toast(e.message, true);
@@ -1281,6 +1411,7 @@ async function reimprimir(){
 
 
 /* ================= Condicional ================= */
+let fiados = [];
 let condItens = [], conds = [], devCond = null, devVoltou = new Set(), modoCond = 'lista', devConfirmar = false, devT;
 const DIAS_AVISO = 7;
 
@@ -1326,8 +1457,11 @@ function cModo(m){
   Cam.desligar();
   modoCond = m;
   document.querySelectorAll('.cmodo').forEach(d => d.style.display = d.id === 'cModo-' + m ? 'block' : 'none');
+  $('cTopo').style.display = (m === 'lista' || m === 'fiado') ? 'block' : 'none';
+  document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
   window.scrollTo(0, 0);
   if (m === 'lista') carregarConds();
+  if (m === 'fiado') carregarFiado();
 }
 
 /* ---------- Lista ---------- */
@@ -1341,9 +1475,11 @@ async function carregarConds(){
   }
 }
 function atualizarBadge(){
-  const n = conds.filter(k => k.atrasado).length;
-  const b = document.querySelector('.nav button[data-t="condicional"] .badge');
-  b.textContent = n; b.style.display = n ? 'grid' : 'none';
+  const a = conds.filter(k => k.atrasado).length;
+  const f = fiados.filter(x => x.vencido).length;
+  const marca = (el, n) => { el.textContent = n; el.style.display = n ? 'grid' : 'none'; };
+  marca(document.querySelector('.nav button[data-t="condicional"] .badge'), a + f);
+  marca($('segCond'), a); marca($('segFiado'), f);
 }
 function renderConds(){
   if (!conds.length){ $('cLista').innerHTML = '<div class="vazio" style="padding-top:34px">Nenhum condicional em aberto</div>'; return; }
@@ -1507,7 +1643,7 @@ async function concluirDevolucao(){
     }
     if (venda.length && !confirm('A sacola do caixa tem peças. Trocar pela venda do condicional?')){ cModo('lista'); return; }
     limparVenda();
-    vendaCond = {id: k.id, cliente: k.cliente};
+    vendaCond = {id: k.id, cliente: k.cliente, whats: k.whats};
     venda = ficaram.map(i => ({c:i.c, n:i.n, p:i.p}));
     renderVenda();
     devCond = null;
@@ -1535,13 +1671,232 @@ function cancelarVendaCond(){
 
 /* Aviso de condicionais atrasados ao abrir o app (uma vez por dia) */
 async function avisarAtrasados(){
-  await carregarConds();
-  const n = conds.filter(k => k.atrasado).length;
+  await Promise.all([carregarConds(), carregarFiado()]);
+  const n = conds.filter(k => k.atrasado).length, f = fiados.filter(x => x.vencido).length;
   const hoje = new Date().toDateString();
-  if (n && store.get('ck_aviso_cond') !== hoje){
+  if ((n || f) && store.get('ck_aviso_cond') !== hoje){
     store.set('ck_aviso_cond', hoje);
-    toast(n === 1 ? '1 condicional com mais de 7 dias' : n + ' condicionais com mais de 7 dias', true);
+    const partes = [];
+    if (n) partes.push(n === 1 ? '1 condicional com mais de 7 dias' : n + ' condicionais com mais de 7 dias');
+    if (f) partes.push(f === 1 ? '1 fiado vencido' : f + ' fiados vencidos');
+    toast(partes.join(' · '), true);
   }
+}
+
+
+/* ================= Fiado ================= */
+const FORMAS_RECEB = ['Pix', 'Dinheiro', 'Débito', 'Crédito'];
+let fcAtual = null, fcForma = 'Pix', fcConfirmar = false, fcT;
+
+const isoHoje = (dias = 0) => {
+  const d = new Date(Date.now() + dias * 86400000);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+};
+const brData = iso => iso ? iso.split('-').reverse().join('/') : '';
+const moeda = t => { const n = num(t); return isNaN(n) ? NaN : Math.round(n * 100) / 100; };
+function lembrarCliente(nome, whats){
+  if (!nome || !whats) return;
+  CLIENTES[nome] = whats; store.set('ck_clientes', CLIENTES); renderClientes();
+}
+function autoWhats(nomeId, whatsId){
+  $(nomeId).addEventListener('input', () => {
+    const w = CLIENTES[$(nomeId).value.trim()];
+    if (w && !$(whatsId).value) $(whatsId).value = fmtWhats(w);
+  });
+  $(whatsId).addEventListener('blur', () => { $(whatsId).value = fmtWhats($(whatsId).value); });
+}
+
+/* ---------- Lista ---------- */
+async function carregarFiado(){
+  try{
+    fiados = await api('listarFiado');
+    fiados.forEach(f => { if (f.whats && !CLIENTES[f.cliente]){ CLIENTES[f.cliente] = f.whats; } });
+    store.set('ck_clientes', CLIENTES); renderClientes();
+    renderFiado();
+    atualizarBadge();
+  }catch(e){
+    if (telaAtual === 'condicional') $('fLista').innerHTML = '<div class="vazio">' + esc(e.message) + '</div>';
+  }
+}
+function situacaoFiado(f){
+  if (f.vencido) return f.diasAtraso <= 1 ? 'Venceu ontem' : 'Venceu há ' + f.diasAtraso + ' dias';
+  return f.venc ? 'Combinado para ' + f.venc : 'Sem data combinada';
+}
+function msgCobranca(f){
+  return `Oi, ${primeiroNome(f.cliente)}! Tudo bem? Aqui é da C&K Modas 🖤\n\n`
+    + `Passando para lembrar da sua conta aqui na loja: ${fmt(f.saldo)}`
+    + (f.venc ? (f.vencido ? `, com pagamento combinado para ${f.venc}.` : `, combinada para ${f.venc}.`) : '.')
+    + `\n\nQuando puder, me avisa como fica melhor para você. Obrigada!`;
+}
+function renderFiado(){
+  const total = fiados.reduce((s, f) => s + f.saldo, 0);
+  if (!fiados.length){ $('fLista').innerHTML = '<div class="vazio" style="padding-top:34px">Nenhuma conta em aberto</div>'; return; }
+  $('fLista').innerHTML = `<div class="fiado-total"><span class="eyebrow">A receber</span><b>${fmt(total)}</b><span class="eyebrow">${fiados.length} ${fiados.length === 1 ? 'cliente' : 'clientes'}</span></div>`
+    + fiados.map((f, i) => `
+    <div class="cond${f.vencido ? ' atrasado' : ''}">
+      <button class="cond-topo" onclick="abrirConta(${i})">
+        <div class="info">
+          <div class="nm">${esc(f.cliente)}</div>
+          <div class="cod">${situacaoFiado(f)}</div>
+        </div>
+        <div class="pr">${fmt(f.saldo)}</div>
+      </button>
+      ${f.vencido ? `<div class="cond-alerta"><svg><use href="#i-alerta"/></svg>Data combinada passou</div>` : ''}
+      <div class="cond-acoes">
+        <button onclick="abrirConta(${i})">Receber / extrato</button>
+        <a href="${linkWhats(f.whats, msgCobranca(f))}" target="_blank" rel="noopener"><svg><use href="#i-whats"/></svg>${f.vencido ? 'Cobrar' : 'WhatsApp'}</a>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- Conta da cliente ---------- */
+$('fcFormas').innerHTML = FORMAS_RECEB.map(p => `<button class="pag${p === fcForma ? ' on' : ''}" data-p="${p}">${p}</button>`).join('');
+$('fcFormas').onclick = e => {
+  const b = e.target.closest('.pag'); if (!b) return;
+  fcForma = b.dataset.p;
+  $('fcFormas').querySelectorAll('.pag').forEach(x => x.classList.toggle('on', x === b));
+  resetFcConfirmar();
+};
+function abrirConta(i){ abrirContaNome(fiados[i] && fiados[i].cliente); }
+async function abrirContaNome(nome){
+  if (!nome) return;
+  fcAtual = {cliente: nome, saldo: 0, linhas: []};
+  $('fcNome').textContent = nome; $('fcExtrato').innerHTML = '<div class="vazio">Carregando…</div>';
+  $('fcRecibo').innerHTML = ''; $('fcValor').value = ''; $('fcNova').value = '';
+  cModo('fcli');
+  try{
+    fcAtual = await api('extratoFiado', nome);
+    renderConta();
+  }catch(e){ toast(e.message, true); }
+}
+function renderConta(){
+  const c = fcAtual;
+  $('fcNome').textContent = c.cliente;
+  $('fcWhats').textContent = fmtWhats(c.whats);
+  $('fcSaldo').textContent = fmt(c.saldo);
+  $('fcVenc').innerHTML = c.saldo <= 0.005 ? 'Conta quitada'
+    : c.vencido ? `<svg><use href="#i-alerta"/></svg>Combinado para ${c.venc} · venceu há ${Math.max(1, c.diasAtraso)} ${c.diasAtraso <= 1 ? 'dia' : 'dias'}`
+    : c.venc ? 'Combinado para ' + c.venc : '';
+  $('fcVenc').classList.toggle('vencido', !!c.vencido);
+  $('fcValor').value = c.saldo > 0 ? c.saldo.toFixed(2).replace('.', ',') : '';
+  $('fcReceber').disabled = c.saldo <= 0.005;
+  $('fcWhatsBtn').href = linkWhats(c.whats, msgExtrato(c));
+  $('fcExtrato').innerHTML = c.linhas.length ? c.linhas.map(l => {
+    const pag = l.tipo === 'Pagamento', data = l.tipo === 'Nova data';
+    return `<div class="it">
+      <div class="tag${pag ? ' esc' : ''}"><svg><use href="${pag ? '#i-check' : data ? '#i-cal' : '#i-sacola'}"/></svg></div>
+      <div class="info"><div class="nm">${data ? 'Nova data: ' + l.venc : esc(l.tipo)}</div>
+        <div class="cod">${l.data}${pag && l.forma ? ' · ' + esc(l.forma) : ''}${!pag && !data && l.venc ? ' · combinado ' + l.venc : ''}${l.obs && !data ? ' · ' + esc(l.obs) : ''}</div></div>
+      <div class="pr${pag ? ' menos' : ''}">${data ? '' : (pag ? '− ' : '') + fmt(l.valor)}</div></div>`;
+  }).join('') : '<div class="vazio">Sem lançamentos</div>';
+  atualizarRestante();
+}
+function msgExtrato(c){
+  const ult = c.linhas.filter(l => l.tipo !== 'Nova data').slice(0, 8).reverse();
+  return `Oi, ${primeiroNome(c.cliente)}! Aqui é da C&K Modas 🖤\n\nSegue o resumo da sua conta:\n`
+    + ult.map(l => `• ${l.data} ${l.tipo === 'Pagamento' ? 'Pagamento' : l.tipo === 'Compra' ? 'Compra' : 'Saldo anterior'}: ${l.tipo === 'Pagamento' ? '− ' : ''}${fmt(l.valor)}`).join('\n')
+    + `\n\nSaldo: ${fmt(c.saldo)}` + (c.venc && c.saldo > 0.005 ? `\nData combinada: ${c.venc}` : '')
+    + `\n\nQualquer dúvida é só chamar. Obrigada!`;
+}
+function atualizarRestante(){
+  if (!fcAtual) return;
+  const v = moeda($('fcValor').value) || 0;
+  const rest = Math.max(0, Math.round((fcAtual.saldo - v) * 100) / 100);
+  $('fcRestante').textContent = fmt(rest);
+  $('fcNovaWrap').style.display = v > 0 && rest > 0.005 ? 'block' : 'none';
+  resetFcConfirmar();
+}
+function resetFcConfirmar(){
+  fcConfirmar = false; clearTimeout(fcT);
+  const b = $('fcReceber'); b.classList.remove('confirmar'); b.textContent = 'Receber pagamento';
+}
+async function receberPagamento(){
+  const c = fcAtual; if (!c) return;
+  const v = moeda($('fcValor').value);
+  if (!(v > 0)){ toast('Digite o valor recebido', true); $('fcValor').focus(); return; }
+  if (v > c.saldo + 0.005){ toast('O valor é maior que o saldo de ' + fmt(c.saldo), true); return; }
+  const b = $('fcReceber');
+  if (!fcConfirmar){
+    fcConfirmar = true; b.classList.add('confirmar');
+    b.textContent = 'Confirmar ' + fmt(v) + ' · ' + fcForma;
+    fcT = setTimeout(resetFcConfirmar, 4000);
+    return;
+  }
+  resetFcConfirmar();
+  b.disabled = true; b.textContent = 'Registrando…';
+  try{
+    const nova = $('fcNovaWrap').style.display !== 'none' ? $('fcNova').value : '';
+    const r = await api('receberFiado', c.cliente, v, fcForma, nova);
+    bip();
+    const recibo = `Oi, ${primeiroNome(r.cliente)}! Aqui é da C&K Modas 🖤\n\nRecebemos seu pagamento de ${fmt(r.recebido)} (${fcForma}). Obrigada!`
+      + (r.saldo > 0.005 ? `\nSaldo restante: ${fmt(r.saldo)}` + (nova ? `, combinado para ${brData(nova)}.` : '.') : `\nSua conta está quitada. 🖤`);
+    fcAtual = await api('extratoFiado', c.cliente);
+    renderConta();
+    $('fcRecibo').innerHTML = `<a class="btn" style="margin-top:10px;border:1px solid #333" href="${linkWhats(r.whats, recibo)}" target="_blank" rel="noopener" onclick="setTimeout(()=>$('fcRecibo').innerHTML='',500)"><svg><use href="#i-whats"/></svg>Enviar recibo no WhatsApp</a>`;
+    carregarFiado();
+    toast(r.saldo > 0.005 ? 'Recebido ' + fmt(r.recebido) + ' · resta ' + fmt(r.saldo) : 'Conta quitada!');
+  }catch(e){ bip(true); toast(e.message, true); }
+  finally{ b.disabled = !fcAtual || fcAtual.saldo <= 0.005; }
+}
+function mudarData(){
+  if (!fcAtual || fcAtual.saldo <= 0.005){ toast('A conta já está quitada', true); return; }
+  const i = $('fcMudar');
+  i.value = fcAtual.vencIso || isoHoje(30);
+  if (i.showPicker){ try{ i.showPicker(); return; }catch(e){} }
+  i.focus(); i.click();
+}
+async function salvarNovaData(v){
+  if (!v || !fcAtual) return;
+  try{
+    await api('novaDataFiado', fcAtual.cliente, v);
+    toast('Nova data: ' + brData(v));
+    carregarFiado();
+    fcAtual = await api('extratoFiado', fcAtual.cliente);
+    renderConta();
+  }catch(e){ toast(e.message, true); }
+}
+
+/* ---------- Conta antiga (caderno) ---------- */
+autoWhats('fiNome', 'fiWhats');
+function abrirSaldoInicial(){
+  ['fiNome', 'fiWhats', 'fiValor', 'fiObs'].forEach(id => $(id).value = '');
+  $('fiVenc').value = isoHoje(30);
+  cModo('fini');
+}
+async function salvarSaldoInicial(){
+  const nome = $('fiNome').value.trim().replace(/\s+/g, ' '), whats = $('fiWhats').value.replace(/\D/g, '');
+  const valor = moeda($('fiValor').value), venc = $('fiVenc').value;
+  if (!nome){ toast('Digite o nome da cliente', true); return; }
+  if (whats.length < 10){ toast('Digite o WhatsApp com DDD', true); return; }
+  if (!(valor > 0)){ toast('Digite quanto ela deve', true); return; }
+  if (!venc){ toast('Escolha a data combinada', true); return; }
+  const b = $('fiSalvar'); b.disabled = true;
+  try{
+    await api('saldoInicialFiado', nome, whats, valor, venc, $('fiObs').value.trim());
+    lembrarCliente(nome, whats);
+    toast('Conta de ' + primeiroNome(nome) + ' cadastrada');
+    cModo('fiado');
+  }catch(e){ toast(e.message, true); }
+  finally{ b.disabled = false; }
+}
+
+/* ---------- Fiado no caixa ---------- */
+autoWhats('vfNome', 'vfWhats');
+function mostrarFiadoCaixa(){
+  const on = pagamento === 'Fiado';
+  $('vFiado').style.display = on ? 'block' : 'none';
+  if (on){
+    if (!$('vfVenc').value) $('vfVenc').value = isoHoje(30);
+    if (vendaCond && !$('vfNome').value){ $('vfNome').value = vendaCond.cliente; $('vfWhats').value = fmtWhats(vendaCond.whats || CLIENTES[vendaCond.cliente] || ''); }
+  }
+  atualizarTotal();
+}
+function limparFiadoCaixa(){ ['vfNome', 'vfWhats', 'vfVenc', 'vfEntrada'].forEach(id => $(id).value = ''); }
+function msgComprovante(f, total, saldo, venc){
+  return `Oi, ${primeiroNome(f.cliente)}! Aqui é da C&K Modas 🖤\n\n`
+    + `Sua compra de hoje ficou registrada na sua conta: ${fmt(total - (f.entrada || 0))}`
+    + (f.entrada ? ` (você deu ${fmt(f.entrada)} de entrada).` : '.')
+    + `\nSaldo total: ${fmt(saldo)}\nData combinada: ${brData(venc)}\n\nObrigada pela preferência!`;
 }
 
 /* ================= Resumo ================= */
@@ -1557,6 +1912,8 @@ async function carregarResumo(){
         <div class="kpi"><div class="eyebrow">Em estoque</div><div class="v">${r.estoqueQtd}</div><div class="d">${fmt(r.estoqueValor)}</div></div>
         <div class="kpi largo"><div class="eyebrow">Em condicional</div><div class="v">${r.condQtd} ${r.condQtd === 1 ? 'peça' : 'peças'}</div>
           <div class="d">${fmt(r.condValor)} com as clientes${r.condAtrasados ? ' · ' + r.condAtrasados + (r.condAtrasados === 1 ? ' cliente há mais de 7 dias' : ' clientes há mais de 7 dias') : ''}</div></div>
+        <div class="kpi largo"><div class="eyebrow">Fiado a receber</div><div class="v">${fmt(r.fiado.aReceber)}</div>
+          <div class="d">${r.fiado.clientes} ${r.fiado.clientes === 1 ? 'cliente' : 'clientes'}${r.fiado.vencidas ? ' · ' + r.fiado.vencidas + (r.fiado.vencidas === 1 ? ' vencida' : ' vencidas') : ''} · ${fmt(r.fiado.recebidoMes)} recebido no mês</div></div>
         <div class="kpi largo"><div class="eyebrow">Lucro estimado no mês</div><div class="v">${fmt(r.lucroMes)}</div>
           <div class="d">${r.pecasComCusto ? 'Sobre ' + r.pecasComCusto + (r.pecasComCusto === 1 ? ' peça vendida' : ' peças vendidas') + ' com custo cadastrado' : 'Cadastre o custo das peças para ver o lucro'}</div></div>
       </div>
