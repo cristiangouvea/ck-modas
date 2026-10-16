@@ -196,6 +196,37 @@
   .sucesso .ok svg{width:36px;height:36px}
   .sucesso .valor{font-family:var(--serif);font-size:52px}
 
+  /* ---------- Condicional ---------- */
+  .voltar{border:0;background:none;color:var(--muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:0 0 10px}
+  a.btn{text-decoration:none}
+  .cond{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);margin-top:12px;overflow:hidden;animation:entra .25s ease}
+  .cond.atrasado{border:1.5px solid var(--ink)}
+  .cond-topo{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:16px 18px;text-align:left}
+  .cond-topo .info{flex:1;min-width:0}
+  .cond .nm{font-weight:500;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cond .cod{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:3px}
+  .cond .pr{font-family:var(--serif);font-size:22px;white-space:nowrap}
+  .cond-alerta{display:flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px}
+  .cond-alerta svg{width:16px;height:16px}
+  .cond-acoes{display:flex;border-top:1px solid var(--line)}
+  .cond-acoes > *{flex:1;height:48px;border:0;background:none;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none}
+  .cond-acoes > * + *{border-left:1px solid var(--line)}
+  .cond-acoes svg{width:17px;height:17px}
+  .cond-acoes > *:active{background:var(--mist)}
+  .it.dev{width:100%;border-left:0;border-right:0;border-bottom:0;background:none;text-align:left}
+  .it.dev.voltou .nm{text-decoration:line-through;color:var(--muted)}
+  .it.dev.voltou .tag{background:var(--ink);color:#fff}
+  .it.dev.voltou .pr{color:var(--muted)}
+  .aviso .aviso-tit{font-family:var(--serif);font-size:26px;margin:6px 0 16px}
+  .banner-cond{display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:10px 10px 10px 16px;margin-top:14px;font-size:14px}
+  .banner-cond span{color:#9d9d9d}
+  .banner-cond b{color:#fff;font-weight:500}
+  .banner-cond button{border:1px solid #333;background:none;color:#cfcfcf;border-radius:999px;height:34px;padding:0 14px;font-size:12px;letter-spacing:.08em}
+  .nav button{position:relative;letter-spacing:.03em;font-size:9px;min-width:0}
+  .nav .barra{gap:0;padding:5px}
+  .badge{position:absolute;top:3px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#fff;color:#000;font-size:10px;font-weight:600;letter-spacing:0;display:none;place-items:center}
+  .nav button.on .badge{background:#000;color:#fff}
+
   @keyframes surge{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes entra{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
   @keyframes laser{0%,100%{transform:translateY(-58px)}50%{transform:translateY(58px)}}
@@ -227,6 +258,8 @@
   <symbol id="i-alerta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></symbol>
   <symbol id="i-engr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-imp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></symbol>
+  <symbol id="i-cabide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.5a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2V9.5"/><path d="M12 9.5 2.7 15.8a1 1 0 0 0 .6 1.8h17.4a1 1 0 0 0 .6-1.8L12 9.5z"/></symbol>
+  <symbol id="i-whats" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.6a8.6 8.6 0 0 1-12.7 7.6L3 20.5l1.4-4.6a8.6 8.6 0 1 1 16.1-4.3z"/><path d="M9.2 8.6c-.3 2.6 2.7 6 5.6 6.1l1.1-1.3-1.9-1-1 .7c-.9-.4-1.8-1.3-2.2-2.2l.7-1-1-1.9-1.3.6z" stroke-width="1.2"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
 </svg>
 
@@ -278,6 +311,8 @@
         <button class="btn mini" onclick="adicionarDigitado()">Incluir</button>
       </div>
 
+      <div class="banner-cond" id="vCond"><div><span>Condicional · </span><b></b></div><button onclick="cancelarVendaCond()">Cancelar</button></div>
+
       <div class="painel">
         <div class="painel-titulo"><span class="eyebrow">Sacola</span><span class="eyebrow" id="vQtd">0 peças</span></div>
         <div id="vLista"><div class="vazio">Nenhuma peça ainda</div></div>
@@ -322,6 +357,91 @@
       <div class="painel">
         <div class="painel-titulo"><span class="eyebrow">Precificadas agora</span><span class="eyebrow" id="pQtd"></span></div>
         <div id="pLista"><div class="vazio">As peças que você salvar aparecem aqui</div></div>
+      </div>
+    </section>
+
+    <!-- CONDICIONAL -->
+    <section class="tela" id="t-condicional">
+
+      <!-- Lista de condicionais em aberto -->
+      <div id="cModo-lista" class="cmodo">
+        <div class="eyebrow">Experimentar em casa</div>
+        <h1>Condicional</h1>
+        <p class="sub">Peças que as clientes levaram para provar.</p>
+        <button class="btn" onclick="novoCondicional()"><svg><use href="#i-cabide"/></svg>Novo condicional</button>
+        <div id="cAviso"></div>
+        <div id="cLista"><div class="vazio">Carregando…</div></div>
+      </div>
+
+      <!-- Novo condicional -->
+      <div id="cModo-novo" class="cmodo" style="display:none">
+        <button class="voltar" onclick="cModo('lista')">‹ Condicionais</button>
+        <h1>Novo condicional</h1>
+        <p class="sub">Leia as peças que a cliente vai levar.</p>
+
+        <div class="cam" id="camCond">
+          <div class="video" id="camCond-v"></div>
+          <button class="idle" onclick="ligarCamera('camCond')"><div class="anel"><svg><use href="#i-scan"/></svg></div><b>Toque para ler</b><span>Passe as peças uma após a outra</span></button>
+          <div class="mira"><svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M2 22V8a6 6 0 0 1 6-6h14M78 2h14a6 6 0 0 1 6 6v14M98 78v14a6 6 0 0 1-6 6H78M22 98H8a6 6 0 0 1-6-6V78"/></svg></div>
+          <div class="laser"></div>
+          <div class="ctrl">
+            <button class="vidro luz" style="display:none" onclick="Cam.lanterna(this)"><svg><use href="#i-luz"/></svg></button>
+            <button class="vidro" onclick="Cam.desligar()"><svg><use href="#i-pause"/></svg>Pausar</button>
+          </div>
+          <div class="lido"></div>
+        </div>
+        <div class="digitar">
+          <input class="input codigo-in" id="cCodigo" placeholder="Ou digite o código" autocomplete="off" autocapitalize="characters" enterkeyhint="done">
+          <button class="btn mini" onclick="incluirCondDigitado()">Incluir</button>
+        </div>
+
+        <div class="painel">
+          <div class="painel-titulo"><span class="eyebrow">Malinha</span><span class="eyebrow" id="cQtd">0 peças</span></div>
+          <div id="cItens"><div class="vazio">Nenhuma peça ainda</div></div>
+        </div>
+
+        <div class="caixa">
+          <label class="rotulo" for="cNome" style="margin-top:0;color:#9d9d9d">Nome da cliente</label>
+          <input class="input" id="cNome" list="cClientes" placeholder="Ex.: Maria Souza" autocomplete="off" autocapitalize="words">
+          <datalist id="cClientes"></datalist>
+          <label class="rotulo" for="cWhats" style="color:#9d9d9d">WhatsApp</label>
+          <input class="input" id="cWhats" inputmode="tel" placeholder="(17) 99999-9999" autocomplete="off">
+          <div class="total"><span class="eyebrow" style="color:#9d9d9d">Valor da malinha</span><span class="valor" id="cTotal">R$ 0,00</span></div>
+          <button class="btn branco" id="cRegistrar" onclick="registrarCondicional()" style="margin-top:16px">Registrar condicional</button>
+        </div>
+      </div>
+
+      <!-- Devolução / fechamento -->
+      <div id="cModo-dev" class="cmodo" style="display:none">
+        <button class="voltar" onclick="cModo('lista')">‹ Condicionais</button>
+        <div class="eyebrow" id="dDesde"></div>
+        <h1 id="dCliente"></h1>
+        <p class="sub">Leia as peças que <b>voltaram</b>. As que ficarem vão para a venda.</p>
+
+        <div class="cam" id="camDev">
+          <div class="video" id="camDev-v"></div>
+          <button class="idle" onclick="ligarCamera('camDev')"><div class="anel"><svg><use href="#i-scan"/></svg></div><b>Ler devolvidas</b><span>Ou toque na peça da lista abaixo</span></button>
+          <div class="mira"><svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M2 22V8a6 6 0 0 1 6-6h14M78 2h14a6 6 0 0 1 6 6v14M98 78v14a6 6 0 0 1-6 6H78M22 98H8a6 6 0 0 1-6-6V78"/></svg></div>
+          <div class="laser"></div>
+          <div class="ctrl">
+            <button class="vidro luz" style="display:none" onclick="Cam.lanterna(this)"><svg><use href="#i-luz"/></svg></button>
+            <button class="vidro" onclick="Cam.desligar()"><svg><use href="#i-pause"/></svg>Pausar</button>
+          </div>
+          <div class="lido"></div>
+        </div>
+
+        <div class="painel">
+          <div class="painel-titulo"><span class="eyebrow">Peças com a cliente</span><span class="eyebrow" id="dQtd"></span></div>
+          <div id="dItens"></div>
+        </div>
+
+        <div class="caixa">
+          <div class="lin"><span>Voltaram</span><b id="dVoltaram">0</b></div>
+          <div class="lin"><span>Ficaram com a cliente</span><b id="dFicaram">0</b></div>
+          <div class="total"><span class="eyebrow" style="color:#9d9d9d">A vender</span><span class="valor" id="dValor">R$ 0,00</span></div>
+          <button class="btn branco" id="dConcluir" onclick="concluirDevolucao()" style="margin-top:16px">Concluir</button>
+          <a class="btn" id="dWhats" target="_blank" rel="noopener" style="margin-top:10px;border:1px solid #333"><svg><use href="#i-whats"/></svg>Lembrar no WhatsApp</a>
+        </div>
       </div>
     </section>
 
@@ -379,6 +499,7 @@
   <nav class="nav"><div class="barra">
     <button data-t="vender" class="on"><svg><use href="#i-sacola"/></svg>Vender</button>
     <button data-t="precificar"><svg><use href="#i-tag"/></svg>Preços</button>
+    <button data-t="condicional"><svg><use href="#i-cabide"/></svg>Condicional<span class="badge"></span></button>
     <button data-t="etiquetas"><svg><use href="#i-qr"/></svg>Etiquetas</button>
     <button data-t="resumo"><svg><use href="#i-graf"/></svg>Resumo</button>
   </div></nav>
@@ -513,7 +634,7 @@ async function conectar(){
     store.set('ck_cfg', CFG);
     fecharConfig();
     toast('Conectado');
-    carregarCatalogo(); carregarMult();
+    carregarCatalogo(); carregarMult(); avisarAtrasados();
   }catch(e){
     CFG = antigo;
     toast(e.message, true);
@@ -546,6 +667,7 @@ function irPara(t){
   $('areaImpressao').style.display = (t === 'etiquetas' && $('areaImpressao').innerHTML) ? 'block' : 'none';
   window.scrollTo(0, 0);
   if (t === 'resumo') carregarResumo();
+  if (t === 'condicional' && modoCond === 'lista') carregarConds();
 }
 /* Bloqueio de tela / troca de app: solta a câmera e religa sozinha ao voltar */
 document.addEventListener('visibilitychange', () => {
@@ -727,7 +849,13 @@ const Cam = {
 };
 function ligarCamera(id){
   bip(); // "destrava" o som no iPhone no primeiro toque
-  Cam.ligar(id, id === 'camVender' ? (c => adicionar(c, true)) : abrirPeca);
+  const acao = {
+    camVender: c => adicionar(c, true),
+    camPrec: abrirPeca,
+    camCond: c => adicionarCond(c, true),
+    camDev: c => marcarDevolvida(c, true)
+  }[id];
+  Cam.ligar(id, acao);
 }
 
 /* Leitor de código USB/Bluetooth (funciona como teclado) */
@@ -739,7 +867,12 @@ document.addEventListener('keydown', e => {
   if (agora - kbT > 100) kb = '';
   kbT = agora;
   if (e.key === 'Enter'){
-    if (RE_COD.test(kb)){ if (telaAtual === 'vender') adicionar(kb); else if (telaAtual === 'precificar') abrirPeca(kb); }
+    if (RE_COD.test(kb)){
+      if (telaAtual === 'vender') adicionar(kb);
+      else if (telaAtual === 'precificar') abrirPeca(kb);
+      else if (telaAtual === 'condicional' && modoCond === 'novo') adicionarCond(kb);
+      else if (telaAtual === 'condicional' && modoCond === 'dev') marcarDevolvida(kb);
+    }
     kb = ''; return;
   }
   if (e.key.length === 1) kb += e.key.toUpperCase();
@@ -747,6 +880,7 @@ document.addEventListener('keydown', e => {
 
 /* ================= Vender ================= */
 let venda = [], pagamento = PAGAMENTOS[0], confirmando = false, confirmT;
+let vendaCond = null;   // {id, cliente} quando a venda vem de um condicional
 
 $('vPags').innerHTML = PAGAMENTOS.map(p => `<button class="pag${p === pagamento ? ' on' : ''}" data-p="${p}">${p}</button>`).join('');
 $('vPags').onclick = e => {
@@ -772,6 +906,7 @@ async function adicionar(c, daCamera){
   }
   if (!p){ bip(true); toast(c + ' sem preço. Precifique antes.', true); return; }
   if (p.s === 'Vendida'){ bip(true); toast(c + ' já foi vendida', true); return; }
+  if (p.s === 'Condicional' && !vendaCond){ bip(true); toast(c + ' está em condicional. Feche pela aba Condicional.', true); return; }
   if (venda.some(i => i.c === c)) return;
   bip();
   venda.unshift({c, n:p.n, p:p.p});
@@ -784,6 +919,7 @@ function renderVenda(){
         <div class="info"><div class="nm">${esc(i.n || 'Peça')}</div><div class="cod">${i.c}</div></div>
         <div class="pr">${fmt(i.p)}</div><button class="rm" onclick="removerItem(${k})" aria-label="Remover"><svg><use href="#i-x"/></svg></button></div>`).join('')
     : '<div class="vazio">Nenhuma peça ainda</div>';
+  renderBannerCond();
   atualizarTotal();
 }
 function removerItem(k){ venda.splice(k, 1); renderVenda(); }
@@ -806,7 +942,7 @@ function resetConfirmar(){
   confirmando = false; clearTimeout(confirmT);
   const b = $('vFinalizar'); b.classList.remove('confirmar'); b.textContent = 'Finalizar venda';
 }
-function limparVenda(){ venda = []; $('vDesc').value = ''; renderVenda(); }
+function limparVenda(){ venda = []; vendaCond = null; $('vDesc').value = ''; renderVenda(); }
 
 async function finalizar(){
   if (!venda.length){ toast('A sacola está vazia', true); return; }
@@ -824,11 +960,12 @@ async function finalizar(){
   b.disabled = true; b.textContent = 'Registrando…';
   Cam.pausar();
   try{
-    const r = await api('finalizarVenda', venda.map(i => i.c), desc, pagamento);
+    const r = await api('finalizarVenda', venda.map(i => i.c), desc, pagamento, vendaCond ? vendaCond.id : '');
     venda.forEach(i => { const p = CAT.get(i.c); if (p) p.s = 'Vendida'; });
     salvarCat();
     $('sucValor').textContent = fmt(r.total);
-    $('sucInfo').textContent = r.qtd + (r.qtd === 1 ? ' peça · ' : ' peças · ') + pagamento;
+    $('sucInfo').textContent = r.qtd + (r.qtd === 1 ? ' peça · ' : ' peças · ') + pagamento + (vendaCond ? ' · ' + vendaCond.cliente : '');
+    if (vendaCond) carregarConds();
     $('sucesso').classList.add('on');
     setTimeout(() => $('sucesso').classList.remove('on'), 1800);
     limparVenda();
@@ -1142,6 +1279,271 @@ async function reimprimir(){
   }catch(e){ toast(e.message, true); }
 }
 
+
+/* ================= Condicional ================= */
+let condItens = [], conds = [], devCond = null, devVoltou = new Set(), modoCond = 'lista', devConfirmar = false, devT;
+const DIAS_AVISO = 7;
+
+const primeiroNome = n => String(n || '').trim().split(/\s+/)[0] || '';
+function fmtWhats(d){
+  d = String(d || '').replace(/\D/g, '');
+  if (d.length === 13 && d.startsWith('55')) d = d.slice(2);
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return d;
+}
+function linkWhats(numero, texto){
+  let d = String(numero || '').replace(/\D/g, '');
+  if (!(d.startsWith('55') && d.length >= 12)) d = '55' + d;
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent(texto);
+}
+function msgLista(cliente, itens){
+  const total = itens.reduce((s, i) => s + i.p, 0);
+  return `Olá, ${primeiroNome(cliente)}! Aqui é da C&K Modas 🖤\n\n`
+    + `Seguem as peças que você levou para experimentar:\n`
+    + itens.map(i => `• ${i.n || 'Peça ' + i.c} — ${fmt(i.p)}`).join('\n')
+    + `\n\nTotal: ${fmt(total)}\n\nQualquer dúvida é só chamar. Aproveite!`;
+}
+function msgLembrete(k){
+  return `Oi, ${primeiroNome(k.cliente)}! Tudo bem? Aqui é da C&K Modas 🖤\n\n`
+    + `Passando para saber se você gostou das peças do condicional (${k.itens.length} ${k.itens.length === 1 ? 'peça' : 'peças'}).\n`
+    + `Quando puder, me avisa se vai ficar com alguma ou se podemos combinar a devolução. Obrigada!`;
+}
+
+/* Clientes já atendidas (para sugerir nome e WhatsApp) */
+let CLIENTES = store.get('ck_clientes') || {};
+function renderClientes(){
+  $('cClientes').innerHTML = Object.keys(CLIENTES).sort().map(n => `<option value="${esc(n)}">`).join('');
+}
+$('cNome').addEventListener('input', () => {
+  const w = CLIENTES[$('cNome').value.trim()];
+  if (w && !$('cWhats').value) $('cWhats').value = fmtWhats(w);
+});
+$('cWhats').addEventListener('blur', () => { $('cWhats').value = fmtWhats($('cWhats').value); });
+renderClientes();
+
+function cModo(m){
+  Cam.desligar();
+  modoCond = m;
+  document.querySelectorAll('.cmodo').forEach(d => d.style.display = d.id === 'cModo-' + m ? 'block' : 'none');
+  window.scrollTo(0, 0);
+  if (m === 'lista') carregarConds();
+}
+
+/* ---------- Lista ---------- */
+async function carregarConds(){
+  try{
+    conds = await api('listarCondicionais');
+    renderConds();
+    atualizarBadge();
+  }catch(e){
+    if (telaAtual === 'condicional') $('cLista').innerHTML = '<div class="vazio">' + esc(e.message) + '</div>';
+  }
+}
+function atualizarBadge(){
+  const n = conds.filter(k => k.atrasado).length;
+  const b = document.querySelector('.nav button[data-t="condicional"] .badge');
+  b.textContent = n; b.style.display = n ? 'grid' : 'none';
+}
+function renderConds(){
+  if (!conds.length){ $('cLista').innerHTML = '<div class="vazio" style="padding-top:34px">Nenhum condicional em aberto</div>'; return; }
+  $('cLista').innerHTML = conds.map((k, i) => `
+    <div class="cond${k.atrasado ? ' atrasado' : ''}">
+      <button class="cond-topo" onclick="abrirDevolucao(${i})">
+        <div class="info">
+          <div class="nm">${esc(k.cliente)}</div>
+          <div class="cod">${k.itens.length} ${k.itens.length === 1 ? 'peça' : 'peças'} · ${k.dias === 0 ? 'hoje' : k.dias === 1 ? 'há 1 dia' : 'há ' + k.dias + ' dias'}</div>
+        </div>
+        <div class="pr">${fmt(k.valor)}</div>
+      </button>
+      ${k.atrasado ? `<div class="cond-alerta"><svg><use href="#i-alerta"/></svg>Com a cliente há mais de ${DIAS_AVISO} dias</div>` : ''}
+      <div class="cond-acoes">
+        <button onclick="abrirDevolucao(${i})">Devolução / venda</button>
+        <a href="${linkWhats(k.whats, k.atrasado ? msgLembrete(k) : msgLista(k.cliente, k.itens))}" target="_blank" rel="noopener"><svg><use href="#i-whats"/></svg>${k.atrasado ? 'Lembrar' : 'WhatsApp'}</a>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- Novo ---------- */
+function novoCondicional(){
+  $('cAviso').innerHTML = '';
+  cModo('novo');
+}
+$('cCodigo').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); incluirCondDigitado(); } });
+function incluirCondDigitado(){ const c = $('cCodigo').value; $('cCodigo').value = ''; adicionarCond(c); }
+
+async function adicionarCond(c, daCamera){
+  c = norm(c);
+  if (c.startsWith('TESTE')){ bip(); toast('Leitura OK · ' + c); return; }
+  if (!RE_COD.test(c)){ bip(true); toast('Código inválido: ' + c, true); return; }
+  if (condItens.some(i => i.c === c)){ if (!daCamera) toast(c + ' já está na malinha', true); return; }
+  let p = CAT.get(c);
+  if (!p){
+    try{
+      const r = await api('buscarPeca', c);
+      if (r.existe){ p = {n:r.nome, p:r.preco, s:r.status, k:r.custo}; CAT.set(c, p); salvarCat(); }
+    }catch(e){ bip(true); toast(e.message, true); return; }
+  }
+  if (!p){ bip(true); toast(c + ' sem preço. Precifique antes.', true); return; }
+  if (p.s === 'Vendida'){ bip(true); toast(c + ' já foi vendida', true); return; }
+  if (p.s === 'Condicional'){ bip(true); toast(c + ' já está em outro condicional', true); return; }
+  if (condItens.some(i => i.c === c)) return;
+  bip();
+  condItens.unshift({c, n:p.n, p:p.p});
+  renderCondItens();
+}
+function renderCondItens(){
+  $('cQtd').textContent = condItens.length + (condItens.length === 1 ? ' peça' : ' peças');
+  $('cItens').innerHTML = condItens.length
+    ? condItens.map((i, k) => `<div class="it"><div class="tag"><svg><use href="#i-tag"/></svg></div>
+        <div class="info"><div class="nm">${esc(i.n || 'Peça')}</div><div class="cod">${i.c}</div></div>
+        <div class="pr">${fmt(i.p)}</div><button class="rm" onclick="condItens.splice(${k},1);renderCondItens()" aria-label="Remover"><svg><use href="#i-x"/></svg></button></div>`).join('')
+    : '<div class="vazio">Nenhuma peça ainda</div>';
+  $('cTotal').textContent = fmt(condItens.reduce((s, i) => s + i.p, 0));
+}
+
+async function registrarCondicional(){
+  const nome = $('cNome').value.trim().replace(/\s+/g, ' ');
+  const whats = $('cWhats').value.replace(/\D/g, '');
+  if (!condItens.length){ toast('Leia as peças da malinha', true); return; }
+  if (!nome){ toast('Digite o nome da cliente', true); $('cNome').focus(); return; }
+  if (whats.length < 10){ toast('Digite o WhatsApp com DDD', true); $('cWhats').focus(); return; }
+  const b = $('cRegistrar'); b.disabled = true; b.textContent = 'Registrando…';
+  Cam.pausar();
+  try{
+    const itens = condItens.slice().reverse();
+    await api('abrirCondicional', nome, whats, itens.map(i => i.c));
+    itens.forEach(i => { const p = CAT.get(i.c); if (p) p.s = 'Condicional'; });
+    salvarCat();
+    CLIENTES[nome] = whats; store.set('ck_clientes', CLIENTES); renderClientes();
+    condItens = []; renderCondItens(); $('cNome').value = ''; $('cWhats').value = '';
+    cModo('lista');
+    $('cAviso').innerHTML = `<div class="caixa aviso">
+        <div class="eyebrow" style="color:#9d9d9d">Condicional registrado</div>
+        <div class="aviso-tit">${esc(nome)} · ${itens.length} ${itens.length === 1 ? 'peça' : 'peças'}</div>
+        <a class="btn branco" href="${linkWhats(whats, msgLista(nome, itens))}" target="_blank" rel="noopener" onclick="setTimeout(()=>$('cAviso').innerHTML='',500)"><svg><use href="#i-whats"/></svg>Enviar lista no WhatsApp</a>
+        <button class="link" style="color:#777" onclick="$('cAviso').innerHTML=''">Agora não</button>
+      </div>`;
+    bip();
+  }catch(e){
+    bip(true); toast(e.message, true);
+  }finally{
+    b.disabled = false; b.textContent = 'Registrar condicional';
+    Cam.retomar();
+  }
+}
+
+/* ---------- Devolução / venda ---------- */
+function abrirDevolucao(i){
+  devCond = conds[i]; if (!devCond) return;
+  devVoltou = new Set();
+  $('dCliente').textContent = devCond.cliente;
+  $('dDesde').textContent = 'Desde ' + devCond.abertoEm.split(' ')[0] + ' · ' + fmtWhats(devCond.whats);
+  $('dWhats').href = linkWhats(devCond.whats, msgLembrete(devCond));
+  cModo('dev');
+  renderDev();
+}
+function renderDev(){
+  const k = devCond; if (!k) return;
+  const ficaram = k.itens.filter(i => !devVoltou.has(i.c));
+  $('dQtd').textContent = k.itens.length + (k.itens.length === 1 ? ' peça' : ' peças');
+  $('dItens').innerHTML = k.itens.map(i => {
+    const v = devVoltou.has(i.c);
+    return `<button class="it dev${v ? ' voltou' : ''}" onclick="alternarDev('${i.c}')">
+      <div class="tag"><svg><use href="${v ? '#i-check' : '#i-tag'}"/></svg></div>
+      <div class="info"><div class="nm">${esc(i.n || 'Peça')}</div><div class="cod">${i.c}${v ? ' · voltou' : ''}</div></div>
+      <div class="pr">${fmt(i.p)}</div></button>`;
+  }).join('');
+  $('dVoltaram').textContent = devVoltou.size;
+  $('dFicaram').textContent = ficaram.length;
+  $('dValor').textContent = fmt(ficaram.reduce((s, i) => s + i.p, 0));
+  resetDevConfirmar();
+}
+function alternarDev(c){
+  if (devVoltou.has(c)) devVoltou.delete(c); else devVoltou.add(c);
+  renderDev();
+}
+function marcarDevolvida(c, daCamera){
+  c = norm(c);
+  if (!devCond) return;
+  if (!devCond.itens.some(i => i.c === c)){ bip(true); toast(c + ' não é deste condicional', true); return; }
+  if (devVoltou.has(c)){ if (!daCamera) toast(c + ' já marcada'); return; }
+  bip();
+  devVoltou.add(c);
+  renderDev();
+}
+function resetDevConfirmar(){
+  devConfirmar = false; clearTimeout(devT);
+  const b = $('dConcluir'); if (!b || !devCond) return;
+  const fic = devCond.itens.length - devVoltou.size;
+  b.classList.remove('confirmar');
+  b.textContent = fic === 0 ? 'Concluir · tudo devolvido' : devVoltou.size === 0 ? 'Vender as ' + fic + ' peças' : 'Concluir e vender ' + fic + (fic === 1 ? ' peça' : ' peças');
+}
+async function concluirDevolucao(){
+  const k = devCond; if (!k) return;
+  const voltaram = [...devVoltou];
+  const ficaram = k.itens.filter(i => !devVoltou.has(i.c));
+  const b = $('dConcluir');
+  if (!devConfirmar){
+    devConfirmar = true; b.classList.add('confirmar');
+    b.textContent = `Confirmar: ${voltaram.length} ${voltaram.length === 1 ? 'voltou' : 'voltaram'} · ${ficaram.length} ${ficaram.length === 1 ? 'ficou' : 'ficaram'}`;
+    devT = setTimeout(resetDevConfirmar, 4000);
+    return;
+  }
+  devConfirmar = false; clearTimeout(devT);
+  b.disabled = true; b.textContent = 'Salvando…';
+  Cam.pausar();
+  try{
+    if (voltaram.length){
+      await api('devolverCondicional', k.id, voltaram);
+      voltaram.forEach(c => { const p = CAT.get(c); if (p) p.s = 'Em estoque'; });
+      salvarCat();
+    }
+    if (!ficaram.length){
+      toast('Tudo devolvido. Condicional encerrado.');
+      devCond = null;
+      cModo('lista');
+      return;
+    }
+    if (venda.length && !confirm('A sacola do caixa tem peças. Trocar pela venda do condicional?')){ cModo('lista'); return; }
+    limparVenda();
+    vendaCond = {id: k.id, cliente: k.cliente};
+    venda = ficaram.map(i => ({c:i.c, n:i.n, p:i.p}));
+    renderVenda();
+    devCond = null;
+    modoCond = 'lista';
+    document.querySelectorAll('.cmodo').forEach(d => d.style.display = d.id === 'cModo-lista' ? 'block' : 'none');
+    irPara('vender');
+    toast(voltaram.length ? voltaram.length + ' de volta ao estoque. Finalize a venda.' : 'Finalize a venda do condicional.');
+  }catch(e){
+    bip(true); toast(e.message, true);
+  }finally{
+    b.disabled = false; resetDevConfirmar();
+    Cam.retomar();
+  }
+}
+function renderBannerCond(){
+  const el = $('vCond');
+  if (!vendaCond){ el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  el.querySelector('b').textContent = vendaCond.cliente;
+}
+function cancelarVendaCond(){
+  if (!confirm('Cancelar a venda do condicional? As peças continuam com a cliente.')) return;
+  limparVenda();
+}
+
+/* Aviso de condicionais atrasados ao abrir o app (uma vez por dia) */
+async function avisarAtrasados(){
+  await carregarConds();
+  const n = conds.filter(k => k.atrasado).length;
+  const hoje = new Date().toDateString();
+  if (n && store.get('ck_aviso_cond') !== hoje){
+    store.set('ck_aviso_cond', hoje);
+    toast(n === 1 ? '1 condicional com mais de 7 dias' : n + ' condicionais com mais de 7 dias', true);
+  }
+}
+
 /* ================= Resumo ================= */
 async function carregarResumo(){
   $('rData').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
@@ -1153,6 +1555,8 @@ async function carregarResumo(){
           <div class="d">${r.hojeVendas} ${r.hojeVendas === 1 ? 'venda' : 'vendas'} · ${r.hojePecas} ${r.hojePecas === 1 ? 'peça' : 'peças'}</div></div>
         <div class="kpi"><div class="eyebrow">No mês</div><div class="v">${fmt(r.mesTotal)}</div><div class="d">${r.mesPecas} peças</div></div>
         <div class="kpi"><div class="eyebrow">Em estoque</div><div class="v">${r.estoqueQtd}</div><div class="d">${fmt(r.estoqueValor)}</div></div>
+        <div class="kpi largo"><div class="eyebrow">Em condicional</div><div class="v">${r.condQtd} ${r.condQtd === 1 ? 'peça' : 'peças'}</div>
+          <div class="d">${fmt(r.condValor)} com as clientes${r.condAtrasados ? ' · ' + r.condAtrasados + (r.condAtrasados === 1 ? ' cliente há mais de 7 dias' : ' clientes há mais de 7 dias') : ''}</div></div>
         <div class="kpi largo"><div class="eyebrow">Lucro estimado no mês</div><div class="v">${fmt(r.lucroMes)}</div>
           <div class="d">${r.pecasComCusto ? 'Sobre ' + r.pecasComCusto + (r.pecasComCusto === 1 ? ' peça vendida' : ' peças vendidas') + ' com custo cadastrado' : 'Cadastre o custo das peças para ver o lucro'}</div></div>
       </div>
@@ -1167,7 +1571,7 @@ async function carregarResumo(){
 }
 
 /* ================= Início ================= */
-if (CFG){ $('app').style.display = 'block'; carregarCatalogo(); carregarMult(); }
+if (CFG){ $('app').style.display = 'block'; carregarCatalogo(); carregarMult(); avisarAtrasados(); }
 else abrirConfig();
 atualizarSync();
 </script>
