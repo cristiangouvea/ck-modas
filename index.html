@@ -70,7 +70,9 @@
   .vidro.on{background:#fff;color:#000}
   .cam .lido{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:14px 16px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:13px;letter-spacing:.08em;opacity:0;transition:opacity .2s}
   .cam .lido.mostra{opacity:1}
-  .cam.flash::after{content:'';position:absolute;inset:0;background:#fff;z-index:4;animation:flash .35s ease-out forwards}
+  .cam::after{content:'';position:absolute;inset:0;background:#fff;z-index:4;opacity:0;pointer-events:none}
+  .cam.flash::after{animation:flash .35s ease-out}
+  .cam .lido,.cam .mira,.cam .laser{pointer-events:none}
 
   .digitar{display:flex;gap:8px;margin-top:12px}
   .input{width:100%;height:52px;border:1px solid var(--line);border-radius:14px;padding:0 16px;font-size:17px;background:var(--paper);outline:none;transition:border-color .15s}
@@ -778,8 +780,9 @@ async function carregarCatalogo(){
 let telaAtual = 'vender';
 document.querySelectorAll('.nav button').forEach(b => b.onclick = () => irPara(b.dataset.t));
 function irPara(t){
-  if (t === telaAtual) return;
+  if (t === telaAtual){ Cam.sanear(); return; }
   Cam.desligar();
+  Cam.sanear();
   telaAtual = t;
   document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
   document.querySelectorAll('.tela').forEach(s => s.classList.toggle('ativa', s.id === 't-' + t));
@@ -792,10 +795,11 @@ function irPara(t){
 /* Bloqueio de tela / troca de app: solta a câmera e religa sozinha ao voltar */
 document.addEventListener('visibilitychange', () => {
   if (document.hidden){ Cam.desligar(true); return; }
+  Cam.sanear();
   if (CFG) carregarCatalogo();
   Cam.religarSePreciso();
 });
-window.addEventListener('pageshow', () => Cam.religarSePreciso());
+window.addEventListener('pageshow', () => { Cam.sanear(); Cam.religarSePreciso(); });
 window.addEventListener('pagehide', () => Cam.desligar(true));
 
 /* ================= Câmera (leitura contínua, controle próprio) ================= */
@@ -923,7 +927,9 @@ const Cam = {
     const c = norm(txt), agora = Date.now();
     if (c === this.ult && agora < this.ultT + 2500) return;   // não lê a mesma etiqueta repetidas vezes
     this.ult = c; this.ultT = agora;
-    this.wrap.classList.remove('flash'); void this.wrap.offsetWidth; this.wrap.classList.add('flash');
+    const w = this.wrap;
+    w.classList.remove('flash'); void w.offsetWidth; w.classList.add('flash');
+    clearTimeout(this.flashT); this.flashT = setTimeout(() => w.classList.remove('flash'), 450);
     const l = this.wrap.querySelector('.lido'); l.textContent = c; l.classList.add('mostra');
     clearTimeout(this.lidoT); this.lidoT = setTimeout(() => l.classList.remove('mostra'), 1200);
     if (this.aoLer) this.aoLer(c);
@@ -945,6 +951,17 @@ const Cam = {
     setTimeout(() => { if (!this.ativo && this.intencao === i) this.ligar(i.wrapId, i.aoLer, true); }, 500);
   },
 
+  sanear(){
+    document.querySelectorAll('.cam').forEach(c => {
+      c.classList.remove('flash');
+      const viva = (this.ativo || this.iniciando) && this.wrap === c;
+      if (!viva){
+        c.classList.remove('on', 'carregando');
+        const v = c.querySelector('.video'); if (v) v.innerHTML = '';
+      }
+    });
+  },
+
   pausar(){ this.pausado = true; },
   retomar(){ this.pausado = false; },
 
@@ -954,7 +971,7 @@ const Cam = {
     if (this.stream){ this.stream.getTracks().forEach(t => { try{ t.stop(); }catch(e){} }); this.stream = null; }
     if (this.video){ try{ this.video.pause(); this.video.srcObject = null; }catch(e){} this.video.remove(); this.video = null; }
     if (this.wrap){
-      this.wrap.classList.remove('on', 'carregando');
+      this.wrap.classList.remove('on', 'carregando', 'flash');
       const b = this.wrap.querySelector('.luz'); b.classList.remove('on'); b.style.display = 'none';
     }
     if (!manterIntencao) this.intencao = null;
