@@ -527,7 +527,14 @@
           <button onclick="mudarData()"><svg><use href="#i-cal"/></svg>Mudar data</button>
           <a id="fcWhatsBtn" target="_blank" rel="noopener"><svg><use href="#i-whats"/></svg>Enviar extrato</a>
         </div>
-        <input type="date" id="fcMudar" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" onchange="salvarNovaData(this.value)">
+        <div class="painel" id="fcMudarBox" style="display:none;padding:4px 18px 18px">
+          <label class="rotulo" for="fcMudar">Nova data combinada</label>
+          <div class="digitar" style="margin-top:0">
+            <input class="input" type="date" id="fcMudar">
+            <button class="btn mini" id="fcMudarOk" onclick="salvarNovaData($('fcMudar').value)">Salvar</button>
+          </div>
+          <button class="link" onclick="$('fcMudarBox').style.display='none'">Cancelar</button>
+        </div>
 
         <div class="painel">
           <div class="painel-titulo"><span class="eyebrow">Extrato</span></div>
@@ -1767,7 +1774,7 @@ async function abrirContaNome(nome){
   if (!nome) return;
   fcAtual = {cliente: nome, saldo: 0, linhas: []};
   $('fcNome').textContent = nome; $('fcExtrato').innerHTML = '<div class="vazio">Carregando…</div>';
-  $('fcRecibo').innerHTML = ''; $('fcValor').value = ''; $('fcNova').value = '';
+  $('fcRecibo').innerHTML = ''; $('fcValor').value = ''; $('fcNova').value = ''; $('fcMudarBox').style.display = 'none';
   cModo('fcli');
   try{
     fcAtual = await api('extratoFiado', nome);
@@ -1845,20 +1852,25 @@ async function receberPagamento(){
 }
 function mudarData(){
   if (!fcAtual || fcAtual.saldo <= 0.005){ toast('A conta já está quitada', true); return; }
-  const i = $('fcMudar');
-  i.value = fcAtual.vencIso || isoHoje(30);
-  if (i.showPicker){ try{ i.showPicker(); return; }catch(e){} }
-  i.focus(); i.click();
+  const box = $('fcMudarBox');
+  if (box.style.display === 'block'){ box.style.display = 'none'; return; }
+  $('fcMudar').value = fcAtual.vencIso || isoHoje(30);
+  box.style.display = 'block';
+  box.scrollIntoView({behavior:'smooth', block:'center'});
 }
 async function salvarNovaData(v){
-  if (!v || !fcAtual) return;
+  if (!fcAtual) return;
+  if (!v){ toast('Escolha a nova data', true); return; }
+  const b = $('fcMudarOk'); b.disabled = true;
   try{
     await api('novaDataFiado', fcAtual.cliente, v);
     toast('Nova data: ' + brData(v));
+    $('fcMudarBox').style.display = 'none';
     carregarFiado();
     fcAtual = await api('extratoFiado', fcAtual.cliente);
     renderConta();
   }catch(e){ toast(e.message, true); }
+  finally{ b.disabled = false; }
 }
 
 /* ---------- Conta antiga (caderno) ---------- */
